@@ -1,0 +1,4 @@
+rootProject.name = library_name
+include 'src:main'
+findProject(':src:main')?.name = 'main'
+
