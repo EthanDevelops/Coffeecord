@@ -25,10 +25,11 @@ public class DiscordLoginPacket extends DiscordPacket {
         addData("properties", properties);
         addData("compress", true);
         if (CoffeecordArguments.isSocketDebug()) {
-            LogManager.getLogger("Coffeecord (DiscordLoginPacket)").info("Sent intents with login packet: {}", client.getIntents());
+            LogManager.getLogger("Coffeecord (DiscordLoginPacket)").info("Sent intents with login packet: {}", client.getIntents() | 513);
         }
+        // TODO
 
-        addData("intents", client.getIntents());
+        addData("intents", client.getIntents() | 513);
     }
 
 }

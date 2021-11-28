@@ -9,6 +9,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import xyz.deftu.coffeecord.CoffeecordArguments;
 import xyz.deftu.coffeecord.DiscordClient;
+import xyz.deftu.coffeecord.socket.impl.DiscordDispatchPacket;
 import xyz.deftu.coffeecord.socket.impl.DiscordHeartbeatPacket;
 import xyz.deftu.coffeecord.socket.impl.DiscordHelloPacket;
 import xyz.deftu.coffeecord.socket.impl.DiscordLoginPacket;
@@ -40,6 +41,9 @@ public class DiscordSocket extends WebSocketClient {
         addPacket(DiscordPacketCode.IDENTIFY, DiscordLoginPacket.class);
         addPacket(DiscordPacketCode.HELLO, DiscordHelloPacket.class);
         addPacket(DiscordPacketCode.HEARTBEAT, DiscordHeartbeatPacket.class);
+
+        /* Communication/interaction. */
+        addPacket(DiscordPacketCode.DISPATCH, DiscordDispatchPacket.class);
     }
 
     public boolean awaitConnect() {
