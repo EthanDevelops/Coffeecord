@@ -7,7 +7,9 @@ import java.util.regex.Pattern;
 
 public class Coffeecord {
 
-    public static final String BASE_URL = "https://discord.com/api";
+    public static final String NAME = "Coffeecord";
+    public static final String BASE_URL = "https://discord.com/api/v9";
+
     private static final Pattern BOOLEAN_PATTERN = Pattern.compile("true|false", Pattern.CASE_INSENSITIVE);
 
     private Coffeecord() {

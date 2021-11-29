@@ -2,7 +2,6 @@ package xyz.deftu.coffeecord;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import okhttp3.OkHttpClient;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
 import xyz.deftu.coffeecord.requests.RequestManager;
 import xyz.deftu.coffeecord.socket.DiscordSocket;
@@ -14,8 +13,6 @@ import java.net.URI;
 import java.util.Collection;
 
 public class DiscordClient extends Thread {
-
-    public static final String NAME = "Coffeecord";
 
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -44,7 +41,7 @@ public class DiscordClient extends Thread {
         this(null);
     }
 
-    public void login(String token) {
+    public DiscordClient login(String token) {
         if (!started) {
             this.token = token;
             boolean connected = socket.awaitConnect();
@@ -59,16 +56,19 @@ public class DiscordClient extends Thread {
         } else {
             throw new IllegalStateException("This client was already started...");
         }
+
+        return this;
     }
 
-    public void login() {
-        login(token);
+    public DiscordClient login() {
+        return login(token);
     }
 
-    public void setToken(String token) {
+    public DiscordClient setToken(String token) {
         if (this.token != null)
             throw new IllegalStateException("Token has already been set, can't modify it now!");
         this.token = token;
+        return this;
     }
 
     public DiscordClient addIntents(GatewayIntent... intents) {

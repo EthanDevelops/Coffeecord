@@ -1,0 +1,12 @@
+sourceSets {
+    example {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+        }
+    }
+}
+
+configurations {
+    examleImplementation.extendsFrom(shade)
+}

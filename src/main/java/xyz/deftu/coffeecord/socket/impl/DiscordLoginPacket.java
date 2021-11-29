@@ -20,8 +20,8 @@ public class DiscordLoginPacket extends DiscordPacket {
         addData("token", token);
         JsonObject properties = new JsonObject();
         properties.addProperty("$os", System.getProperty("os.name"));
-        properties.addProperty("$browser", DiscordClient.NAME);
-        properties.addProperty("$device", DiscordClient.NAME);
+        properties.addProperty("$browser", Coffeecord.NAME);
+        properties.addProperty("$device", Coffeecord.NAME);
         addData("properties", properties);
         addData("compress", true);
         if (Coffeecord.isSocketDebug()) {

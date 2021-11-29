@@ -9,21 +9,6 @@ version = library_version
 
 sourceCompatibility = targetCompatibility = 1.8
 
-sourceSets {
-    example {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-        }
-    }
-}
-
-configurations {
-    shade
-    implementation.extendsFrom(shade)
-    exampleImplementation.extendsFrom(shade)
-}
-
 repositories {
     mavenCentral()
     mavenLocal()
@@ -32,6 +17,11 @@ repositories {
         name = "JitPack"
         url = "https://jitpack.io"
     }
+}
+
+configurations {
+    shade
+    implementation.extendsFrom(shade)
 }
 
 dependencies {
@@ -63,5 +53,7 @@ shadowJar {
 
     archiveClassifier.set('')
 }
+
+apply from: 'gradle/example.gradle'
 
 jar.finalizedBy(shadowJar)
