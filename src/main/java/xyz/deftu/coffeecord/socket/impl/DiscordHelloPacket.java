@@ -1,7 +1,6 @@
 package xyz.deftu.coffeecord.socket.impl;
 
 import com.google.gson.JsonObject;
-import org.apache.logging.log4j.LogManager;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.socket.DiscordPacket;
 import xyz.deftu.coffeecord.socket.DiscordPacketCode;
@@ -17,9 +16,7 @@ public class DiscordHelloPacket extends DiscordPacket {
 
     public void onReceive(JsonObject content, JsonObject data) {
         long interval = data.get("heartbeat_interval").getAsLong();
-        Multithreading.schedule(() -> {
-            client.getSocket().send(new DiscordHeartbeatPacket(client, getSequenceNumber()));
-        }, interval, interval, TimeUnit.MILLISECONDS);
+        Multithreading.schedule(() -> client.getSocket().send(new DiscordHeartbeatPacket(client, getSequenceNumber())), interval, interval, TimeUnit.MILLISECONDS);
     }
 
 }

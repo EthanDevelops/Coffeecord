@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
+import xyz.deftu.coffeecord.requests.RequestManager;
 import xyz.deftu.coffeecord.socket.DiscordSocket;
 import xyz.deftu.coffeecord.socket.impl.DiscordLoginPacket;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
@@ -28,6 +29,7 @@ public class DiscordClient extends Thread {
     private final DiscordSocket socket;
     private final QalcyoEventBus eventBus = new QalcyoEventBus();
     private final DiscordEventParser eventParser;
+    private final RequestManager requestManager;
 
     private int intents = 0;
 
@@ -35,6 +37,7 @@ public class DiscordClient extends Thread {
         this.token = token;
         socket = new DiscordSocket(URI.create("wss://gateway.discord.gg/?v=9&encoding=json"), this);
         eventParser = new DiscordEventParser(this);
+        requestManager = new RequestManager(this);
     }
 
     public DiscordClient() {
@@ -98,6 +101,10 @@ public class DiscordClient extends Thread {
 
     public DiscordEventParser getEventParser() {
         return eventParser;
+    }
+
+    public RequestManager getRequestManager() {
+        return requestManager;
     }
 
     public int getIntents() {

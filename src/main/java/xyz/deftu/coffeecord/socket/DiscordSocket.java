@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import xyz.deftu.coffeecord.CoffeecordArguments;
+import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.socket.impl.DiscordDispatchPacket;
 import xyz.deftu.coffeecord.socket.impl.DiscordHeartbeatPacket;
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class DiscordSocket extends WebSocketClient {
 
     private final DiscordClient client;
-    private final Logger logger = LogManager.getLogger("Coffeecord (DiscordSocket)");
+    private final Logger logger = Coffeecord.createLogger(DiscordSocket.class);
 
     private final Map<DiscordPacketCode, Class<? extends DiscordPacket>> packetRegistry = new HashMap<>();
 
@@ -60,7 +60,7 @@ public class DiscordSocket extends WebSocketClient {
     }
 
     public void onMessage(String message) {
-        if (CoffeecordArguments.isSocketDebug()) {
+        if (Coffeecord.isSocketDebug()) {
             logger.info("Received message from Discord gateway: {}", message);
         }
 
@@ -104,7 +104,7 @@ public class DiscordSocket extends WebSocketClient {
     public void send(DiscordPacket packet) {
         packet.onSend();
         String content = client.getGson().toJson(packet.asJson());
-        if (CoffeecordArguments.isSocketDebug()) {
+        if (Coffeecord.isSocketDebug()) {
             logger.info("Sent packet: {}", content);
         }
 

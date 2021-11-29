@@ -8,7 +8,7 @@ class TestBotKt {
 
     val client = discord {
         token = System.getProperty("coffeecord.test.token") /* Set the bot token in JVM arguments. */
-        // broken - intents = listOf(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
+        intents = listOf(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
         eventListeners = arrayOf(this@TestBotKt)
     }
 
@@ -18,7 +18,7 @@ class TestBotKt {
 
     @SubscribeEvent
     private fun onMessageReceived(event: MessageReceivedEvent) {
-        println("Message receieved.")
+        println(event.message)
     }
 
 }
