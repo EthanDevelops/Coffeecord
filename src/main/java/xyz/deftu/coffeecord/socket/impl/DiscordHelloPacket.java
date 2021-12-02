@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.socket.DiscordPacket;
 import xyz.deftu.coffeecord.socket.DiscordPacketCode;
-import xyz.qalcyo.mango.Multithreading;
+import xyz.deftu.deftils.Multithreading;
 
 import java.util.concurrent.TimeUnit;
 

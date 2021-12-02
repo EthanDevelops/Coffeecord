@@ -8,8 +8,8 @@ import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.IJsonifiable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
-import xyz.qalcyo.mango.Strings;
-import xyz.qalcyo.mango.exceptions.UnfinishedApiException;
+import xyz.deftu.deftils.Strings;
+import xyz.deftu.deftils.exceptions.UnfinishedApiException;
 
 import java.time.OffsetDateTime;
 

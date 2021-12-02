@@ -1,7 +1,7 @@
 package xyz.deftu.coffeecord.events;
 
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.qalcyo.eventbus.Event;
+import xyz.deftu.eventbus.Event;
 
 public class GenericEvent extends Event {
     public final DiscordClient client;

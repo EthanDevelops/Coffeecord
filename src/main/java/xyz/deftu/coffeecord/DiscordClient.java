@@ -8,7 +8,7 @@ import xyz.deftu.coffeecord.requests.RequestManager;
 import xyz.deftu.coffeecord.socket.DiscordSocket;
 import xyz.deftu.coffeecord.socket.impl.DiscordLoginPacket;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
-import xyz.qalcyo.eventbus.QalcyoEventBus;
+import xyz.deftu.eventbus.SimpleEventBus;
 
 import java.net.URI;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class DiscordClient implements ISnowflake {
     private long id = -1;
 
     private final DiscordSocket socket;
-    private final QalcyoEventBus eventBus = new QalcyoEventBus();
+    private final SimpleEventBus eventBus = new SimpleEventBus();
     private final DiscordEventParser eventParser;
     private final RequestManager requestManager;
 
@@ -73,6 +73,10 @@ public class DiscordClient implements ISnowflake {
         return this;
     }
 
+    public int getIntents() {
+        return intents;
+    }
+
     public DiscordClient addIntents(GatewayIntent... intents) {
         int value = GatewayIntent.from(GatewayIntent.of(intents));
         this.intents |= value;
@@ -101,7 +105,7 @@ public class DiscordClient implements ISnowflake {
         return socket;
     }
 
-    public QalcyoEventBus getEventBus() {
+    public SimpleEventBus getEventBus() {
         return eventBus;
     }
 
@@ -113,7 +117,7 @@ public class DiscordClient implements ISnowflake {
         return requestManager;
     }
 
-    public long initializeId(long id) {
+    public void initializeId(long id) {
         if (this.id != -1)
             throw new IllegalStateException("ID has already be initialized.");
         this.id = id;

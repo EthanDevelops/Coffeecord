@@ -10,8 +10,8 @@ version = library_version
 sourceCompatibility = targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
 
     maven {
         name = "JitPack"
@@ -28,11 +28,11 @@ dependencies {
     /* Internal. */
     shade('org.java-websocket:Java-WebSocket:1.5.2')
     shade('com.squareup.okhttp3:okhttp:4.9.2')
-    shade('xyz.deftu.mango:Mango:1.8')
+    shade('xyz.deftu.deftils:Deftils:1.0')
     shade('com.google.code.gson:gson:2.8.9')
 
     /* Utility. */
-    shade('xyz.qalcyo.eventbus:QalcyoEventBus:4.1')
+    shade('xyz.deftu.eventbus:SimpleEventBus:1.0')
     shade('com.github.ben-manes.caffeine:caffeine:2.9.2')
 
     /* Logging. */

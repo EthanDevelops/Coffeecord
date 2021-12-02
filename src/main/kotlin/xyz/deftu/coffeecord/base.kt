@@ -2,9 +2,7 @@ package xyz.deftu.coffeecord
 
 import xyz.deftu.coffeecord.socket.GatewayIntent
 
-fun discord(client: DiscordClientBuilder.() -> Unit): DiscordClient {
-    return DiscordClientBuilder().apply(client).build()
-}
+fun discord(builder: DiscordClientBuilder.() -> Unit): DiscordClient = DiscordClientBuilder().apply(builder).build()
 
 class DiscordClientBuilder {
     var token: String? = null

@@ -2,7 +2,7 @@ package xyz.deftu.coffeecord;
 
 import xyz.deftu.coffeecord.events.MessageReceivedEvent;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
-import xyz.qalcyo.eventbus.SubscribeEvent;
+import xyz.deftu.eventbus.SubscribeEvent;
 
 public class TestBot {
 
