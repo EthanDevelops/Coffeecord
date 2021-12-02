@@ -8,6 +8,7 @@ import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.IJsonifiable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
+import xyz.deftu.coffeecord.entities.user.User;
 import xyz.deftu.deftils.Strings;
 import xyz.deftu.deftils.exceptions.UnfinishedApiException;
 
@@ -25,9 +26,11 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
     private final String content;
     private MessageReference messageReference;
 
+    private final User author;
+
     private final long channelId;
 
-    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, long channelId) {
+    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, long channelId) {
         this.client = client;
         this.tts = tts;
         this.timestamp = timestamp;
@@ -36,6 +39,7 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
         this.editedTimestamp = editedTimestamp;
         this.content = content;
         this.messageReference = messageReference;
+        this.author = author;
 
         this.channelId = channelId;
     }
@@ -81,6 +85,10 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
         return this;
     }
 
+    public User getAuthor() {
+        return author;
+    }
+
     public long getChannelId() {
         return channelId;
     }
@@ -89,7 +97,7 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
         message = message.withReference(new MessageReference(getId(), channelId, guildId));
         DiscordClient client = getClient();
         Request request = new Request.Builder()
-                .url(Coffeecord.BASE_URL + "/channels/" + channelId + "/messages")
+                .url(Coffeecord.API_URL + "/channels/" + channelId + "/messages")
                 .post(RequestBody.create(client.getGson().toJson(message.asJson()), MediaType.get("application/json")))
                 .build();
         client.getRequestManager().request(request, true);

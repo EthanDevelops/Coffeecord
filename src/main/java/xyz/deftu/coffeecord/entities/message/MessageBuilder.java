@@ -32,7 +32,7 @@ public class MessageBuilder {
     }
 
     public Message build() {
-        return new Message(null, tts, null, false, -1, null, content, null, -1);
+        return new Message(null, tts, null, false, -1, null, content, null, null, -1);
     }
 
 }

@@ -2,6 +2,7 @@ package xyz.deftu.coffeecord;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import xyz.deftu.coffeecord.entities.EntityCreator;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
 import xyz.deftu.coffeecord.requests.RequestManager;
@@ -28,6 +29,7 @@ public class DiscordClient implements ISnowflake {
     private final DiscordSocket socket;
     private final SimpleEventBus eventBus = new SimpleEventBus();
     private final DiscordEventParser eventParser;
+    private final EntityCreator entityCreator;
     private final RequestManager requestManager;
 
     private int intents = 0;
@@ -36,6 +38,7 @@ public class DiscordClient implements ISnowflake {
         this.token = token;
         socket = new DiscordSocket(URI.create("wss://gateway.discord.gg/?v=9&encoding=json"), this);
         eventParser = new DiscordEventParser(this);
+        entityCreator = new EntityCreator(this);
         requestManager = new RequestManager(this);
     }
 
@@ -111,6 +114,10 @@ public class DiscordClient implements ISnowflake {
 
     public DiscordEventParser getEventParser() {
         return eventParser;
+    }
+
+    public EntityCreator getEntityCreator() {
+        return entityCreator;
     }
 
     public RequestManager getRequestManager() {

@@ -16,7 +16,7 @@ public interface IChannel extends ISnowflake, IMentionable {
     default void send(Message message) {
         DiscordClient client = getClient();
         Request request = new Request.Builder()
-                .url(Coffeecord.BASE_URL + "/channels/" + getId() + "/messages")
+                .url(Coffeecord.API_URL + "/channels/" + getId() + "/messages")
                 .post(RequestBody.create(client.getGson().toJson(message.asJson()), MediaType.get("application/json")))
                 .build();
         client.getRequestManager().request(request, true);

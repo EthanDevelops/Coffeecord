@@ -18,9 +18,10 @@ class TestBotKt {
 
     @SubscribeEvent
     private fun onMessageReceived(event: MessageReceivedEvent) {
-        if (event.message.messageReference != null) {
+        println(event.message.author.avatarUrl)
+        if (!event.message.author.isBot) {
             event.message.reply(message {
-                content = "Thanks!"
+                content = "Your avatar url is ${event.message.author.avatarUrl}"
             }, 690263476089782428)
         }
     }
