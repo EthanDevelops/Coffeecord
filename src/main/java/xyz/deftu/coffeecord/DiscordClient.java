@@ -2,6 +2,7 @@ package xyz.deftu.coffeecord;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
 import xyz.deftu.coffeecord.requests.RequestManager;
 import xyz.deftu.coffeecord.socket.DiscordSocket;
@@ -12,7 +13,7 @@ import xyz.qalcyo.eventbus.QalcyoEventBus;
 import java.net.URI;
 import java.util.Collection;
 
-public class DiscordClient extends Thread {
+public class DiscordClient implements ISnowflake {
 
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -22,6 +23,7 @@ public class DiscordClient extends Thread {
 
     private String token;
     private boolean started;
+    private long id = -1;
 
     private final DiscordSocket socket;
     private final QalcyoEventBus eventBus = new QalcyoEventBus();
@@ -91,6 +93,10 @@ public class DiscordClient extends Thread {
         return token;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public DiscordSocket getSocket() {
         return socket;
     }
@@ -107,8 +113,10 @@ public class DiscordClient extends Thread {
         return requestManager;
     }
 
-    public int getIntents() {
-        return intents;
+    public long initializeId(long id) {
+        if (this.id != -1)
+            throw new IllegalStateException("ID has already be initialized.");
+        this.id = id;
     }
 
 }

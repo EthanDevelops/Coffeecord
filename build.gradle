@@ -25,18 +25,22 @@ configurations {
 }
 
 dependencies {
-    shade('xyz.qalcyo.eventbus:QalcyoEventBus:4.1')
+    /* Internal. */
+    shade('org.java-websocket:Java-WebSocket:1.5.2')
+    shade('com.squareup.okhttp3:okhttp:4.9.2')
     shade('xyz.deftu.mango:Mango:1.8')
-
     shade('com.google.code.gson:gson:2.8.9')
 
+    /* Utility. */
+    shade('xyz.qalcyo.eventbus:QalcyoEventBus:4.1')
+    shade('com.github.ben-manes.caffeine:caffeine:2.9.2')
+
+    /* Logging. */
     shade('org.apache.logging.log4j:log4j-api:2.14.1')
     shade('org.apache.logging.log4j:log4j-core:2.14.1')
     shade('org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1')
 
-    shade('org.java-websocket:Java-WebSocket:1.5.2')
-    shade('com.squareup.okhttp3:okhttp:4.9.2')
-
+    /* Compatibility. */
     shade('org.jetbrains.kotlin:kotlin-stdlib-jdk8')
     shade('org.jetbrains.kotlin:kotlin-reflect')
     shade('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1-native-mt')
