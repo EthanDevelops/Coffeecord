@@ -1,9 +1,9 @@
 package xyz.deftu.coffeecord.entities.message;
 
 import com.google.gson.JsonObject;
-import xyz.deftu.coffeecord.entities.IJsonifiable;
+import xyz.deftu.coffeecord.entities.JsonSerializable;
 
-public class MessageReference implements IJsonifiable<JsonObject> {
+public class MessageReference implements JsonSerializable<JsonObject> {
 
     private final long messageId;
     private final long channelId;

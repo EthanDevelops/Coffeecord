@@ -1,8 +1,15 @@
 package xyz.deftu.coffeecord.entities.message;
 
+import xyz.deftu.coffeecord.entities.message.embed.MessageEmbed;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MessageBuilder {
 
     private boolean tts;
+    private List<MessageEmbed> embeds = new ArrayList<>();
     private String content;
 
     public boolean isTts() {
@@ -11,6 +18,29 @@ public class MessageBuilder {
 
     public MessageBuilder setTts(boolean tts) {
         this.tts = tts;
+        return this;
+    }
+
+    public List<MessageEmbed> getEmbeds() {
+        return embeds;
+    }
+
+    public MessageBuilder setEmbeds(List<MessageEmbed> embeds) {
+        this.embeds = embeds;
+        return this;
+    }
+
+    public MessageBuilder setEmbeds(MessageEmbed... embeds) {
+        return setEmbeds(Arrays.asList(embeds));
+    }
+
+    public MessageBuilder addEmbed(MessageEmbed embed) {
+        embeds.add(embed);
+        return this;
+    }
+
+    public MessageBuilder removeEmbed(int index) {
+        embeds.remove(index);
         return this;
     }
 
@@ -32,7 +62,7 @@ public class MessageBuilder {
     }
 
     public Message build() {
-        return new Message(null, tts, null, false, -1, null, content, null, null, -1);
+        return new Message(null, tts, null, false, -1, embeds, null, content, null, null, -1);
     }
 
 }

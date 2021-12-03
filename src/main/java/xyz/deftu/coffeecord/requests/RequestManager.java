@@ -30,7 +30,16 @@ public class RequestManager {
         request(request, new Callback() {
             public void onResponse(@NotNull Call call, @NotNull Response response) {
                 if (Coffeecord.isRequestDebug()) {
-                    logger.info(response.message());
+                    String body = null;
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null) {
+                        try {
+                            body = responseBody.string();
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    logger.info(response.message() + (body == null ? "" : " | " + body));
                 }
             }
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

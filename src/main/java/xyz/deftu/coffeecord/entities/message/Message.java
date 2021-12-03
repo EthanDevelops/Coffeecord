@@ -1,20 +1,23 @@
 package xyz.deftu.coffeecord.entities.message;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.deftu.coffeecord.entities.IJsonifiable;
+import xyz.deftu.coffeecord.entities.JsonSerializable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
+import xyz.deftu.coffeecord.entities.message.embed.MessageEmbed;
 import xyz.deftu.coffeecord.entities.user.User;
 import xyz.deftu.deftils.Strings;
 import xyz.deftu.deftils.exceptions.UnfinishedApiException;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
-public class Message implements ISnowflake, IJsonifiable<JsonObject> {
+public class Message implements ISnowflake, JsonSerializable<JsonObject> {
 
     private final DiscordClient client;
 
@@ -22,6 +25,7 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
     private final OffsetDateTime timestamp;
     private boolean pinned;
     private final long id;
+    private final List<MessageEmbed> embeds;
     private final OffsetDateTime editedTimestamp;
     private final String content;
     private MessageReference messageReference;
@@ -30,12 +34,13 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
 
     private final long channelId;
 
-    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, long channelId) {
+    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, List<MessageEmbed> embeds, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, long channelId) {
         this.client = client;
         this.tts = tts;
         this.timestamp = timestamp;
         this.pinned = pinned;
         this.id = id;
+        this.embeds = embeds;
         this.editedTimestamp = editedTimestamp;
         this.content = content;
         this.messageReference = messageReference;
@@ -110,6 +115,15 @@ public class Message implements ISnowflake, IJsonifiable<JsonObject> {
         String content = getContent();
 
         value.addProperty("tts", tts);
+        if (embeds != null) {
+            JsonArray embedsArray = new JsonArray();
+            for (MessageEmbed embed : embeds) {
+                embedsArray.add(embed.asJson());
+            }
+
+            value.add("embeds", embedsArray);
+        }
+
         if (!Strings.isNullOrEmpty(content))
             value.addProperty("content", content);
         if (messageReference != null)

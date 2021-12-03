@@ -1,14 +1,15 @@
 package xyz.deftu.coffeecord.entities.user;
 
 import com.google.gson.JsonObject;
+import org.checkerframework.common.value.qual.IntRange;
 import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.deftu.coffeecord.entities.IJsonifiable;
+import xyz.deftu.coffeecord.entities.JsonSerializable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 
-import java.awt.*;
+import java.util.List;
 
-public class User implements ISnowflake, IJsonifiable<JsonObject> {
+public class User implements ISnowflake, JsonSerializable<JsonObject> {
 
     private final DiscordClient client;
 
@@ -19,7 +20,7 @@ public class User implements ISnowflake, IJsonifiable<JsonObject> {
     private final boolean bot;
     private final boolean system;
     private final String banner;
-    private final int flags; // TODO
+    private final List<UserFlag> flags;
 
     public User(DiscordClient client, long id, String username, String discriminator, String avatar, boolean bot, boolean system, String banner, int flags) {
         this.client = client;
@@ -30,7 +31,7 @@ public class User implements ISnowflake, IJsonifiable<JsonObject> {
         this.bot = bot;
         this.system = system;
         this.banner = banner;
-        this.flags = flags;
+        this.flags = UserFlag.from(flags);
     }
 
     public DiscordClient getClient() {
@@ -57,8 +58,12 @@ public class User implements ISnowflake, IJsonifiable<JsonObject> {
         return avatar;
     }
 
+    public String getAvatarUrl(@IntRange(from = 64, to = 4096) int size) {
+        return Coffeecord.CDN_URL + "avatars/" + id + "/" + avatar + ".png?size=" + size;
+    }
+
     public String getAvatarUrl() {
-        return Coffeecord.CDN_URL + "avatars/" + id + "/" + avatar + ".png";
+        return getAvatarUrl(2048);
     }
 
     public boolean isBot() {
@@ -77,7 +82,7 @@ public class User implements ISnowflake, IJsonifiable<JsonObject> {
         return Coffeecord.CDN_URL + "banners/" + id + "/" + banner + ".png";
     }
 
-    public int getFlags() {
+    public List<UserFlag> getFlags() {
         return flags;
     }
 

@@ -1,14 +1,19 @@
 package xyz.deftu.coffeecord.entities;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.message.Message;
+import xyz.deftu.coffeecord.entities.message.embed.*;
 import xyz.deftu.coffeecord.entities.message.MessageReference;
 import xyz.deftu.coffeecord.entities.user.User;
+import xyz.deftu.coffeecord.utils.JsonHelper;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityCreator {
 
@@ -19,186 +24,64 @@ public class EntityCreator {
     }
 
     public User createUser(JsonObject data) {
-        long id = -1;
-        if (data.has("id")) {
-            JsonElement idElement = data.get("id");
-            if (idElement.isJsonPrimitive()) {
-                JsonPrimitive idPrimitive = idElement.getAsJsonPrimitive();
-                if (idPrimitive.isString() || idPrimitive.isNumber()) {
-                    id = idPrimitive.getAsLong();
-                }
-            }
-        }
+        Number idRaw = JsonHelper.getNumber(data, "id");
+        long id = idRaw == null ? -1 : idRaw.longValue();
 
-        String username = null;
-        if (data.has("username")) {
-            JsonElement usernameElement = data.get("username");
-            if (usernameElement.isJsonPrimitive()) {
-                JsonPrimitive usernamePrimitive = usernameElement.getAsJsonPrimitive();
-                if (usernamePrimitive.isString()) {
-                    username = usernamePrimitive.getAsString();
-                }
-            }
-        }
+        String username = JsonHelper.getString(data, "username");
+        String discriminator = JsonHelper.getString(data, "discriminator");
+        String avatar = JsonHelper.getString(data, "avatar");
+        boolean bot = JsonHelper.getBoolean(data, "bot");
+        boolean system = JsonHelper.getBoolean(data, "system");
+        String banner = JsonHelper.getString(data, "banner");
 
-        String discriminator = null;
-        if (data.has("discriminator")) {
-            JsonElement discriminatorElement = data.get("discriminator");
-            if (discriminatorElement.isJsonPrimitive()) {
-                JsonPrimitive discriminatorPrimitive = discriminatorElement.getAsJsonPrimitive();
-                if (discriminatorPrimitive.isString() || discriminatorPrimitive.isNumber()) {
-                    discriminator = discriminatorPrimitive.getAsString();
-                }
-            }
-        }
-
-        String avatar = null;
-        if (data.has("avatar")) {
-            JsonElement avatarElement = data.get("avatar");
-            if (avatarElement.isJsonPrimitive()) {
-                JsonPrimitive avatarPrimitive = avatarElement.getAsJsonPrimitive();
-                if (avatarPrimitive.isString()) {
-                    avatar = avatarPrimitive.getAsString();
-                }
-            }
-        }
-
-        boolean bot = false;
-        if (data.has("bot")) {
-            JsonElement botElement = data.get("bot");
-            if (botElement.isJsonPrimitive()) {
-                JsonPrimitive botPrimitive = botElement.getAsJsonPrimitive();
-                if (botPrimitive.isBoolean()) {
-                    bot = botPrimitive.getAsBoolean();
-                }
-            }
-        }
-
-        boolean system = false;
-        if (data.has("system")) {
-            JsonElement systemElement = data.get("system");
-            if (systemElement.isJsonPrimitive()) {
-                JsonPrimitive systemPrimitive = systemElement.getAsJsonPrimitive();
-                if (systemPrimitive.isBoolean()) {
-                    system = systemPrimitive.getAsBoolean();
-                }
-            }
-        }
-
-        String banner = null;
-        if (data.has("banner")) {
-            JsonElement bannerElement = data.get("banner");
-            if (bannerElement.isJsonPrimitive()) {
-                JsonPrimitive bannerPrimitive = bannerElement.getAsJsonPrimitive();
-                if (bannerPrimitive.isString()) {
-                    banner = bannerPrimitive.getAsString();
-                }
-            }
-        }
-
-        int flags = -1;
-        if (data.has("public_flags")) {
-            JsonElement flagsElement = data.get("public_flags");
-            if (flagsElement.isJsonPrimitive()) {
-                JsonPrimitive flagsPrimitive = flagsElement.getAsJsonPrimitive();
-                if (flagsPrimitive.isNumber()) {
-                    flags = flagsPrimitive.getAsInt();
-                }
-            }
-        }
+        Number flagsRaw = JsonHelper.getNumber(data, "flags");
+        int flags = flagsRaw == null ? -1 : flagsRaw.intValue();
 
         return new User(client, id, username, discriminator, avatar, bot, system, banner, flags);
     }
 
     public Message createMessage(JsonObject data) {
-        boolean tts = false;
-        if (data.has("tts")) {
-            JsonElement ttsElement = data.get("tts");
-            if (ttsElement.isJsonPrimitive()) {
-                JsonPrimitive ttsPrimitive = ttsElement.getAsJsonPrimitive();
-                if (ttsPrimitive.isBoolean()) {
-                    tts = ttsPrimitive.getAsBoolean();
-                }
-            }
-        }
+        boolean tts = JsonHelper.getBoolean(data, "tts");
 
-        OffsetDateTime timestamp = OffsetDateTime.now();
-        if (data.has("timestamp")) {
-            JsonElement timestampElement = data.get("timestamp");
-            if (timestampElement.isJsonPrimitive()) {
-                JsonPrimitive timestampPrimitive = timestampElement.getAsJsonPrimitive();
-                if (timestampPrimitive.isString()) {
-                    timestamp = OffsetDateTime.parse(timestampPrimitive.getAsString());
-                }
-            }
-        }
+        String timestampRaw = JsonHelper.getString(data, "timestamp");
+        OffsetDateTime timestamp = timestampRaw == null ? OffsetDateTime.now() : OffsetDateTime.parse(timestampRaw);
 
         // TODO - Referenced message.
 
-        boolean pinned = false;
-        if (data.has("pinned")) {
-            JsonElement pinnedElement = data.get("pinned");
-            if (pinnedElement.isJsonPrimitive()) {
-                JsonPrimitive pinnedPrimitive = pinnedElement.getAsJsonPrimitive();
-                if (pinnedPrimitive.isBoolean()) {
-                    pinned = pinnedPrimitive.getAsBoolean();
-                }
-            }
-        }
+        boolean pinned = JsonHelper.getBoolean(data, "pinned");
 
         // TODO - Mentions
         // TODO - Mentioned roles
         // TODO - Mentions everyone
         // TODO - Member
 
-        long id = -1;
-        if (data.has("id")) {
-            JsonElement idElement = data.get("id");
-            if (idElement.isJsonPrimitive()) {
-                JsonPrimitive idPrimitive = idElement.getAsJsonPrimitive();
-                if (idPrimitive.isNumber() || idPrimitive.isString()) {
-                    id = idPrimitive.getAsLong();
-                }
-            }
-        }
+        Number idRaw = JsonHelper.getNumber(data, "id");
+        long id = idRaw == null ? -1 : idRaw.longValue();
 
         // TODO - Flags
-        // TODO - Embeds
 
-        OffsetDateTime editedTimestamp = null;
-        if (data.has("edited_timestamp")) {
-            JsonElement editedTimestampElement = data.get("edited_timestamp");
-            if (editedTimestampElement.isJsonPrimitive()) {
-                JsonPrimitive editedTimestampPrimitive = editedTimestampElement.getAsJsonPrimitive();
-                if (editedTimestampPrimitive.isString()) {
-                    editedTimestamp = OffsetDateTime.parse(editedTimestampPrimitive.getAsString());
+        List<MessageEmbed> embeds = new ArrayList<>();
+        if (data.has("embeds")) {
+            JsonElement embedsElement = data.get("embeds");
+            if (embedsElement.isJsonArray()) {
+                JsonArray embedsArray = embedsElement.getAsJsonArray();
+                for (JsonElement element : embedsArray) {
+                    if (element.isJsonObject()) {
+                        embeds.add(createMessageEmbed(element.getAsJsonObject()));
+                    }
                 }
             }
         }
 
-        String content = null;
-        if (data.has("content")) {
-            JsonElement contentElement = data.get("content");
-            if (contentElement.isJsonPrimitive()) {
-                JsonPrimitive contentPrimitive = contentElement.getAsJsonPrimitive();
-                if (contentPrimitive.isString()) {
-                    content = contentPrimitive.getAsString();
-                }
-            }
-        }
+        String editedTimestampRaw = JsonHelper.getString(data, "edited_timestamp");
+        OffsetDateTime editedTimestamp = editedTimestampRaw == null ? null : OffsetDateTime.parse(editedTimestampRaw);
+
+        String content = JsonHelper.getString(data, "content");
 
         // TODO - Components
 
-        long channelId = -1;
-        if (data.has("channel_id")) {
-            JsonElement channelIdElement = data.get("channel_id");
-            if (channelIdElement.isJsonPrimitive()) {
-                JsonPrimitive channelIdPrimitive = channelIdElement.getAsJsonPrimitive();
-                if (channelIdPrimitive.isNumber() || channelIdPrimitive.isString()) {
-                    channelId = channelIdPrimitive.getAsLong();
-                }
-            }
-        }
+        Number channelIdRaw = JsonHelper.getNumber(data, "channel_id");
+        long channelId = channelIdRaw == null ? -1 : channelIdRaw.longValue();
 
         MessageReference messageReference = null;
         if (data.has("message_reference")) {
@@ -243,17 +126,96 @@ public class EntityCreator {
             }
         }
 
-        User author = null;
-        if (data.has("author")) {
-            JsonElement authorElement = data.get("author");
-            if (authorElement.isJsonObject()) {
-                author = createUser(authorElement.getAsJsonObject());
-            }
-        }
+        JsonObject authorRaw = JsonHelper.getObject(data, "author");
+        User author = authorRaw == null ? null : createUser(authorRaw);
 
         // TODO - Attachments
 
-        return new Message(client, tts, timestamp, pinned, id, editedTimestamp, content, messageReference, author, channelId);
+        return new Message(client, tts, timestamp, pinned, id, embeds, editedTimestamp, content, messageReference, author, channelId);
+    }
+
+    public MessageEmbed createMessageEmbed(JsonObject data) {
+        String title = JsonHelper.getString(data, "title");
+
+        String typeRaw = JsonHelper.getString(data, "type");
+        MessageEmbedType type = typeRaw == null ? MessageEmbedType.RICH : MessageEmbedType.from(typeRaw);
+
+        String description = JsonHelper.getString(data, "description");
+        String url = JsonHelper.getString(data, "url");
+
+        String timestampRaw = JsonHelper.getString(data, "timestamp");
+        OffsetDateTime timestamp = timestampRaw == null ? null : OffsetDateTime.parse(timestampRaw);
+
+        Number colourRaw = JsonHelper.getNumber(data, "color");
+        int colour = colourRaw == null ? 0 : colourRaw.intValue();
+
+        JsonObject footerRaw = JsonHelper.getObject(data, "footer");
+        MessageEmbedFooter footer = footerRaw == null ? null : createMessageEmbedFooter(footerRaw);
+
+        JsonObject imageRaw = JsonHelper.getObject(data, "image");
+        MessageEmbedMedia image = imageRaw == null ? null : createMessageEmbedMedia(imageRaw);
+
+        JsonObject thumbnailRaw = JsonHelper.getObject(data, "thumbnail");
+        MessageEmbedMedia thumbnail = thumbnailRaw == null ? null : createMessageEmbedMedia(thumbnailRaw);
+
+        JsonObject videoRaw = JsonHelper.getObject(data, "video");
+        MessageEmbedMedia video = videoRaw == null ? null : createMessageEmbedMedia(videoRaw);
+
+        JsonObject authorRaw = JsonHelper.getObject(data, "author");
+        MessageEmbedAuthor author = authorRaw == null ? null : createMessageEmbedAuthor(authorRaw);
+
+        List<MessageEmbedField> fields = new ArrayList<>();
+        if (data.has("fields")) {
+            JsonElement fieldsElement = data.get("fields");
+            if (fieldsElement.isJsonArray()) {
+                JsonArray fieldsArray = fieldsElement.getAsJsonArray();
+                for (JsonElement element : fieldsArray) {
+                    if (element.isJsonObject()) {
+                        fields.add(createMessageEmbedField(element.getAsJsonObject()));
+                    }
+                }
+            }
+        }
+
+        return new MessageEmbed(title, type, description, url, timestamp, colour, footer, image, thumbnail, video, author, fields);
+    }
+
+    public MessageEmbedFooter createMessageEmbedFooter(JsonObject data) {
+        String text = JsonHelper.getString(data, "text");
+        String icon = JsonHelper.getString(data, "icon_url");
+        String proxyIcon = JsonHelper.getString(data, "proxy_icon_url");
+
+        return new MessageEmbedFooter(text, icon, proxyIcon);
+    }
+
+    public MessageEmbedMedia createMessageEmbedMedia(JsonObject data) {
+        String url = JsonHelper.getString(data, "url");
+        String proxyUrl = JsonHelper.getString(data, "proxy_url");
+
+        Number widthRaw = JsonHelper.getNumber(data, "width");
+        int width = widthRaw == null ? -1 : widthRaw.intValue();
+
+        Number heightRaw = JsonHelper.getNumber(data, "height");
+        int height = heightRaw == null ? -1 : heightRaw.intValue();
+
+        return new MessageEmbedMedia(url, proxyUrl, width, height);
+    }
+
+    public MessageEmbedAuthor createMessageEmbedAuthor(JsonObject data) {
+        String name = JsonHelper.getString(data, "name");
+        String url = JsonHelper.getString(data, "url");
+        String iconUrl = JsonHelper.getString(data, "icon_url");
+        String proxyIconUrl = JsonHelper.getString(data, "proxy_icon_url");
+
+        return new MessageEmbedAuthor(name, url, iconUrl, proxyIconUrl);
+    }
+
+    public MessageEmbedField createMessageEmbedField(JsonObject data) {
+        String name = JsonHelper.getString(data, "name");
+        String value = JsonHelper.getString(data, "value");
+        boolean inline = JsonHelper.getBoolean(data, "inline");
+
+        return new MessageEmbedField(name, value, inline);
     }
 
 }
