@@ -16,13 +16,17 @@ compileKotlin {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
+    maven {
+        url = 'https://s01.oss.sonatype.org/repositories/releases/'
+    }
 
     maven {
         name = "JitPack"
         url = "https://jitpack.io"
     }
+
+    mavenLocal()
 }
 
 configurations {
