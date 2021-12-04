@@ -20,14 +20,6 @@ class TestBotKt {
     @SubscribeEvent
     private fun onMessageReceived(event: MessageReceivedEvent) {
         if (!event.message.author.isBot) {
-            var flags = ""
-            for (flag in event.message.author.flags) {
-                val first = event.message.author.flags.indexOf(flag) == 0
-                val last = event.message.author.flags.indexOf(flag) == event.message.author.flags.size - 1
-                flags += (if (first) "" else if(last) " and " else ", ")
-                flags += flag.getName()
-            }
-
             event.message.reply(message {
                 embeds = listOf(
                     embed {
