@@ -28,29 +28,28 @@ class TestBotKt {
                         url = "https://deftu.xyz/"
                         timestamp = OffsetDateTime.now()
 
-
-                        footer = embedFooter {
+                        footer {
                             text = "Hello! This bot was made using the Coffeecord library."
                         }
 
-                        image = embedMedia {
+                        image {
                             url = "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F13%2F2015%2F04%2F05%2Ffeatured.jpg&q=85"
                         }
 
-                        thumbnail = embedMedia {
+                        author {
                             url = "https://lh3.googleusercontent.com/proxy/FNlhQZ5RIU03NDykNHKuahZCSQb-wexoJGJgh92YVyuvzdRrgvXiAB6Krltg5t56sZw9i7kn3tEt7bbOMaHAiEfD7L7sZns"
                         }
 
-                        author = embedAuthor {
+                        author {
                             name = "Deftu"
                         }
 
                         fields = listOf(
-                            embedField {
+                            field {
                                 name = "Field 1"
                                 value = "This is a Kotlin test with fields."
                             },
-                            embedField {
+                            field {
                                 name = "Field 2"
                                 value = "If this appears, the test worked."
                             }

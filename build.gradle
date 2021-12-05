@@ -1,11 +1,14 @@
 plugins {
     id 'java'
+    id 'signing'
+    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '1.6.0'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
-group = library_group
-version = library_version
+group = projectGroup
+version = projectVersion
+archivesBaseName = projectName
 
 sourceCompatibility = targetCompatibility = 1.8
 compileKotlin {
@@ -58,7 +61,68 @@ dependencies {
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    enabled = false
+    from 'LICENSE'
+}
+
+publishing {
+    publications {
+        local(MavenPublication) {
+            groupId = projectGroup
+            artifactId = projectName
+            version = projectVersion
+
+            from components.java
+        }
+
+        publish(MavenPublication) {
+            from components.java
+
+            groupId = projectGroup
+            artifactId = projectName
+            version = projectVersion
+
+            pom {
+                name = projectName
+                description = projectDescription
+                url = projectGit
+
+                licenses {
+                    license {
+                        name = 'GNU LESSER GENERAL PUBLIC LICENSE, Version 3'
+                        url = 'https://www.gnu.org/licenses/lgpl-3.0.en.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = "deftu"
+                        name = "Deftu"
+                        email = "deftudev@gmail.com"
+                    }
+                }
+
+                scm {
+                    url = projectGit
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "MavenCentral"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = findProperty("publishing.mavencentral.username")
+                password = findProperty("publishing.mavencentral.password")
+            }
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 shadowJar {
@@ -66,6 +130,15 @@ shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     archiveClassifier.set('')
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign publishing.publications.publish
+    sign configurations.archives
 }
 
 apply from: 'gradle/example.gradle'

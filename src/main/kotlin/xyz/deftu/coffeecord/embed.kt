@@ -1,19 +1,50 @@
 package xyz.deftu.coffeecord
 
-import xyz.deftu.coffeecord.entities.message.Message
-import xyz.deftu.coffeecord.entities.message.MessageBuilder
 import xyz.deftu.coffeecord.entities.message.embed.*
+import java.time.OffsetDateTime
 
-fun embed(builder: MessageEmbedBuilder.() -> Unit): MessageEmbed = MessageEmbedBuilder()
-    .apply(builder).build()
-fun embedFooter(builder: MessageEmbedFooterBuilder.() -> Unit): MessageEmbedFooter = MessageEmbedFooterBuilder()
-    .apply(builder).build()
-fun embedMedia(builder: MessageEmbedMediaBuilder.() -> Unit): MessageEmbedMedia = MessageEmbedMediaBuilder()
-    .apply(builder).build()
-fun embedAuthor(builder: MessageEmbedAuthorBuilder.() -> Unit): MessageEmbedAuthor = MessageEmbedAuthorBuilder()
-    .apply(builder).build()
-fun embedField(builder: MessageEmbedFieldBuilder.() -> Unit): MessageEmbedField = MessageEmbedFieldBuilder()
-    .apply(builder).build()
+fun embed(builder: MessageEmbedBuilderBuilder.() -> Unit): MessageEmbed = MessageEmbedBuilderBuilder()
+    .apply(builder).build().build()
+
+class MessageEmbedBuilderBuilder {
+    private val builder = MessageEmbedBuilder()
+
+    var title: String? = null
+    var description: String? = null
+    var url: String? = null
+    var timestamp: OffsetDateTime? = null
+    var colour = 0
+    var fields: List<MessageEmbedField> = mutableListOf()
+
+    fun footer(builder: MessageEmbedFooterBuilder.() -> Unit) {
+        this.builder.footer = MessageEmbedFooterBuilder()
+            .apply(builder).build()
+    }
+    fun image(builder: MessageEmbedMediaBuilder.() -> Unit) {
+        this.builder.image = MessageEmbedMediaBuilder()
+            .apply(builder).build()
+    }
+    fun thumbnail(builder: MessageEmbedMediaBuilder.() -> Unit) {
+        this.builder.thumbnail = MessageEmbedMediaBuilder()
+            .apply(builder).build()
+    }
+    fun video(builder: MessageEmbedMediaBuilder.() -> Unit) {
+        this.builder.video = MessageEmbedMediaBuilder()
+            .apply(builder).build()
+    }
+    fun author(builder: MessageEmbedAuthorBuilder.() -> Unit) {
+        this.builder.author = MessageEmbedAuthorBuilder()
+            .apply(builder).build()
+    }
+    fun field(builder: MessageEmbedFieldBuilder.() -> Unit): MessageEmbedField =
+        MessageEmbedFieldBuilder()
+            .apply(builder).build()
+
+    fun build(): MessageEmbedBuilder {
+        builder.fields = fields
+        return builder
+    }
+}
 
 class MessageEmbedFooterBuilder {
     var text: String? = null
