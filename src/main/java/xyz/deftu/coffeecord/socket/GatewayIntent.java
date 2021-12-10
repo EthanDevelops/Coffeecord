@@ -1,11 +1,12 @@
 package xyz.deftu.coffeecord.socket;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
+import xyz.deftu.coffeecord.entities.user.UserFlag;
+
+import java.util.*;
 
 public enum GatewayIntent {
 
+    GUILDS(0),
     GUILD_MEMBERS(1),
     GUILD_BANS(2),
     GUILD_EMOJIS(3),
@@ -22,13 +23,32 @@ public enum GatewayIntent {
     DIRECT_MESSAGE_TYPING(14);
 
     private final int offset;
+    private final int raw;
 
     GatewayIntent(int offset) {
         this.offset = offset;
+        this.raw = 1 << offset;
     }
 
-    public static EnumSet<GatewayIntent> of(GatewayIntent... intents) {
-        return EnumSet.copyOf(Arrays.asList(intents));
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getRaw() {
+        return raw;
+    }
+
+    public static List<GatewayIntent> of(int raw) {
+        List<GatewayIntent> value = new ArrayList<>();
+        if (raw == 0)
+            return value;
+        for (GatewayIntent intent : values()) {
+            if ((raw & intent.raw) == intent.raw) {
+                value.add(intent);
+            }
+        }
+
+        return value;
     }
 
     public static int from(Collection<GatewayIntent> collection) {

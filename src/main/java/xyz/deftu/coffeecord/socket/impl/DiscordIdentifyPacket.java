@@ -6,12 +6,13 @@ import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.socket.DiscordPacket;
 import xyz.deftu.coffeecord.socket.DiscordPacketCode;
+import xyz.deftu.coffeecord.socket.GatewayIntent;
 
-public class DiscordLoginPacket extends DiscordPacket {
+public class DiscordIdentifyPacket extends DiscordPacket {
 
     private final String token;
 
-    public DiscordLoginPacket(DiscordClient client, String token) {
+    public DiscordIdentifyPacket(DiscordClient client, String token) {
         super(client, DiscordPacketCode.IDENTIFY);
         this.token = token;
     }
@@ -23,8 +24,8 @@ public class DiscordLoginPacket extends DiscordPacket {
         properties.addProperty("$browser", Coffeecord.NAME);
         properties.addProperty("$device", Coffeecord.NAME);
         addData("properties", properties);
-        addData("compress", true);
         if (Coffeecord.isSocketDebug()) {
+            LogManager.getLogger("Coffeecord (DiscordLoginPacket)").info("Sent intents with login packet: {}", GatewayIntent.of(client.getIntents()));
             LogManager.getLogger("Coffeecord (DiscordLoginPacket)").info("Sent intents with login packet: {}", client.getIntents());
         }
 

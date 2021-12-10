@@ -3,7 +3,6 @@ package xyz.deftu.coffeecord.socket;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -12,11 +11,13 @@ import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.socket.impl.DiscordDispatchPacket;
 import xyz.deftu.coffeecord.socket.impl.DiscordHeartbeatPacket;
 import xyz.deftu.coffeecord.socket.impl.DiscordHelloPacket;
-import xyz.deftu.coffeecord.socket.impl.DiscordLoginPacket;
+import xyz.deftu.coffeecord.socket.impl.DiscordIdentifyPacket;
 import xyz.deftu.coffeecord.utils.JsonHelper;
 
 import java.lang.reflect.Constructor;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class DiscordSocket extends WebSocketClient {
 
     public void initialize() {
         /* Connection. */
-        addPacket(DiscordPacketCode.IDENTIFY, DiscordLoginPacket.class);
+        addPacket(DiscordPacketCode.IDENTIFY, DiscordIdentifyPacket.class);
         addPacket(DiscordPacketCode.HELLO, DiscordHelloPacket.class);
         addPacket(DiscordPacketCode.HEARTBEAT, DiscordHeartbeatPacket.class);
 
@@ -90,6 +91,8 @@ public class DiscordSocket extends WebSocketClient {
                     }
                 }
             }
+        } else {
+            logger.error("Discord sent an invalid packet to the gateway.\n{}", message);
         }
     }
 

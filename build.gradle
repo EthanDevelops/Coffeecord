@@ -3,6 +3,7 @@ plugins {
     id 'signing'
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '1.6.0'
+    id 'com.github.gmazzo.buildconfig' version '3.0.1'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
@@ -16,6 +17,16 @@ compileKotlin {
         jvmTarget = "1.8"
         languageVersion = "1.4"
     }
+}
+
+buildConfig {
+    /* Give info for internal workings. */
+    className(projectName + 'Info')
+    packageName(projectGroup)
+
+    buildConfigField('String', 'NAME', "\"${projectName}\"")
+    buildConfigField('String', 'VERSION', "\"${projectVersion}\"")
+    buildConfigField('String', 'GITHUB', "\"${projectGit}\"")
 }
 
 repositories {

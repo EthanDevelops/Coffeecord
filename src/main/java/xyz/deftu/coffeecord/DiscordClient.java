@@ -2,18 +2,19 @@ package xyz.deftu.coffeecord;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import xyz.deftu.coffeecord.entities.EntityCache;
 import xyz.deftu.coffeecord.entities.EntityCreator;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.entities.user.SelfUser;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
 import xyz.deftu.coffeecord.requests.RestRequester;
 import xyz.deftu.coffeecord.socket.DiscordSocket;
-import xyz.deftu.coffeecord.socket.impl.DiscordLoginPacket;
+import xyz.deftu.coffeecord.socket.impl.DiscordIdentifyPacket;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
 import xyz.deftu.eventbus.SimpleEventBus;
 
 import java.net.URI;
-import java.util.Collection;
+import java.util.*;
 
 public class DiscordClient implements ISnowflake {
 
@@ -27,24 +28,26 @@ public class DiscordClient implements ISnowflake {
     private boolean started;
     private long id = -1;
 
+    private final EntityCache entityCache;
     private final DiscordSocket socket;
     private final SimpleEventBus eventBus = new SimpleEventBus();
     private final DiscordEventParser eventParser;
     private final EntityCreator entityCreator;
     private final RestRequester restRequester;
-    private final SelfApplication selfApplication;
-    private final SelfUser selfUser;
+    private SelfUser selfUser;
+
+    private UUID sessionId;
 
     private int intents = 0;
 
     public DiscordClient(String token) {
         this.token = token;
+        this.intents |= GatewayIntent.from(Collections.singletonList(GatewayIntent.GUILDS));
+        entityCache = new EntityCache();
         socket = new DiscordSocket(URI.create("wss://gateway.discord.gg/?v=9&encoding=json"), this);
         eventParser = new DiscordEventParser(this);
         entityCreator = new EntityCreator(this);
         restRequester = new RestRequester(this);
-        selfApplication = new SelfApplication(this);
-        selfUser = new SelfUser(this);
     }
 
     public DiscordClient() {
@@ -56,7 +59,7 @@ public class DiscordClient implements ISnowflake {
             this.token = token;
             boolean connected = socket.awaitConnect();
             if (connected) {
-                socket.send(new DiscordLoginPacket(this, token));
+                socket.send(new DiscordIdentifyPacket(this, token));
                 eventParser.initialize();
 
                 started = true;
@@ -86,12 +89,17 @@ public class DiscordClient implements ISnowflake {
     }
 
     public DiscordClient addIntents(GatewayIntent... intents) {
-        int value = GatewayIntent.from(GatewayIntent.of(intents));
+        List<GatewayIntent> list = Arrays.asList(intents);
+        if (list.contains(GatewayIntent.GUILDS))
+            throw new IllegalArgumentException("GUILDS is already enabled by default, don't even try it!");
+        int value = GatewayIntent.from(list);
         this.intents |= value;
         return this;
     }
 
     public DiscordClient addIntents(Collection<GatewayIntent> intents) {
+        if (intents.contains(GatewayIntent.GUILDS))
+            throw new IllegalArgumentException("GUILDS is already enabled by default, don't even try it!");
         int value = GatewayIntent.from(intents);
         this.intents |= value;
         return this;
@@ -109,8 +117,8 @@ public class DiscordClient implements ISnowflake {
         return id;
     }
 
-    public SelfApplication getSelfApplication() {
-        return selfApplication;
+    public EntityCache getEntityCache() {
+        return entityCache;
     }
 
     public DiscordSocket getSocket() {
@@ -137,10 +145,16 @@ public class DiscordClient implements ISnowflake {
         return selfUser;
     }
 
-    public void initializeId(long id) {
-        if (this.id != -1)
-            throw new IllegalStateException("ID has already be initialized.");
-        this.id = id;
+    public void setSelfUser(SelfUser selfUser) {
+        this.selfUser = selfUser;
+    }
+
+    public UUID getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(UUID sessionId) {
+        this.sessionId = sessionId;
     }
 
 }

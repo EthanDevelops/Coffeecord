@@ -9,6 +9,7 @@ import xyz.deftu.coffeecord.entities.channel.*;
 import xyz.deftu.coffeecord.entities.channel.direct.BasePrivateChannel;
 import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel;
 import xyz.deftu.coffeecord.entities.channel.direct.PrivateGroupChannel;
+import xyz.deftu.coffeecord.entities.channel.guild.GuildCategory;
 import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel;
 import xyz.deftu.coffeecord.entities.guild.Guild;
 import xyz.deftu.coffeecord.entities.guild.GuildFeature;
@@ -16,6 +17,7 @@ import xyz.deftu.coffeecord.entities.guild.GuildPermission;
 import xyz.deftu.coffeecord.entities.message.Message;
 import xyz.deftu.coffeecord.entities.message.embed.*;
 import xyz.deftu.coffeecord.entities.message.MessageReference;
+import xyz.deftu.coffeecord.entities.user.SelfUser;
 import xyz.deftu.coffeecord.entities.user.User;
 import xyz.deftu.coffeecord.requests.types.ChannelRequest;
 import xyz.deftu.coffeecord.requests.types.GuildRequest;
@@ -31,6 +33,21 @@ public class EntityCreator {
 
     public EntityCreator(DiscordClient client) {
         this.client = client;
+    }
+
+    public SelfUser createSelfUser(JsonObject data) {
+        Number idRaw = JsonHelper.getNumber(data, "id");
+        long id = idRaw == null ? -1 : idRaw.longValue();
+
+        String username = JsonHelper.getString(data, "username");
+        String discriminator = JsonHelper.getString(data, "discriminator");
+        String avatar = JsonHelper.getString(data, "avatar");
+        String banner = JsonHelper.getString(data, "banner");
+
+        Number flagsRaw = JsonHelper.getNumber(data, "flags");
+        int flags = flagsRaw == null ? -1 : flagsRaw.intValue();
+
+        return new SelfUser(client, id, username, discriminator, avatar, banner, flags);
     }
 
     public User createUser(JsonObject data) {
@@ -249,7 +266,9 @@ public class EntityCreator {
         Guild guild = guildIdRaw == null ? null : client.getRestRequester().request(new GuildRequest(client, guildIdRaw.longValue()));
         return type == ChannelType.GUILD_TEXT ?
                 createGuildTextChannel(data, id, guild) :
-                null;
+                (type == ChannelType.GUILD_CATEGORY ?
+                        createGuildCategory(data, id, guild) :
+                        null);
     }
 
     public GuildTextChannel createGuildTextChannel(JsonObject data, long id, Guild guild) {
@@ -262,7 +281,7 @@ public class EntityCreator {
         List<GuildPermission> permissionOverwrites = new ArrayList<>();
         if (permissionOverwritesRaw != null) {
             for (JsonElement overwrite : permissionOverwritesRaw) {
-                System.out.println(overwrite);
+                System.out.println("Permission overwrite: " + overwrite);
             }
         }
 
@@ -276,6 +295,23 @@ public class EntityCreator {
         String topic = JsonHelper.getString(data, "topic");
 
         return new GuildTextChannel(client, id, guild, name, position, permissionOverwrites, parentId, cooldown, nsfw, topic);
+    }
+
+    public GuildCategory createGuildCategory(JsonObject data, long id, Guild guild) {
+        String name = JsonHelper.getString(data, "name");
+
+        Number positionRaw = JsonHelper.getNumber(data, "position");
+        int position = positionRaw == null ? -1 : positionRaw.intValue();
+
+        JsonArray permissionOverwritesRaw = JsonHelper.getArray(data, "permission_overwrites");
+        List<GuildPermission> permissionOverwrites = new ArrayList<>();
+        if (permissionOverwritesRaw != null) {
+            for (JsonElement overwrite : permissionOverwritesRaw) {
+                System.out.println("Permission overwrite: " + overwrite);
+            }
+        }
+
+        return new GuildCategory(client, id, guild, name, position, permissionOverwrites);
     }
 
     public BasePrivateChannel createPrivateChannel(JsonObject data, long id, ChannelType type) {

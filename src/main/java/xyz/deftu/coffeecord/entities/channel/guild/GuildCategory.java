@@ -9,12 +9,12 @@ import java.util.List;
 
 public class GuildCategory extends GuildChannel {
 
-    public GuildCategory(DiscordClient client, long id, Guild guild, String name, int position, List<GuildPermission> permissionOverwrites, long parentId) {
-        super(client, id, guild, name, position, permissionOverwrites, parentId);
+    public GuildCategory(DiscordClient client, long id, Guild guild, String name, int position, List<GuildPermission> permissionOverwrites) {
+        super(client, id, guild, name, position, permissionOverwrites, -1);
     }
 
-    public GuildCategory(DiscordClient client, long id, long guildId, String name, int position, List<GuildPermission> permissionOverwrites, long parentId) {
-        super(client, id, guildId, name, position, permissionOverwrites, parentId);
+    public GuildCategory(DiscordClient client, long id, long guildId, String name, int position, List<GuildPermission> permissionOverwrites) {
+        super(client, id, guildId, name, position, permissionOverwrites, -1);
     }
 
 }

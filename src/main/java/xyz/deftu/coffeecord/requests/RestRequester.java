@@ -17,6 +17,7 @@ public class RestRequester {
     public RestRequester(DiscordClient client) {
         this.client = client;
         this.httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new CoffeecordRequestInterceptor())
                 .build();
     }
 

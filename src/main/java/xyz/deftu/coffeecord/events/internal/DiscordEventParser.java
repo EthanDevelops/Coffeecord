@@ -3,7 +3,9 @@ package xyz.deftu.coffeecord.events.internal;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
+import xyz.deftu.coffeecord.events.internal.impl.GuildCreateEventHandler;
 import xyz.deftu.coffeecord.events.internal.impl.MessageCreateEventHandler;
+import xyz.deftu.coffeecord.events.internal.impl.ReadyEventHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +22,9 @@ public class DiscordEventParser {
     }
 
     public void initialize() {
+        addHandler("READY", new ReadyEventHandler(client));
         addHandler("MESSAGE_CREATE", new MessageCreateEventHandler(client));
+        addHandler("GUILD_CREATE", new GuildCreateEventHandler(client));
     }
 
     public void parse(JsonObject content, JsonObject data) {
