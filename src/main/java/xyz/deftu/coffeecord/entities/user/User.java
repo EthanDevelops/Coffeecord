@@ -1,15 +1,18 @@
 package xyz.deftu.coffeecord.entities.user;
 
 import com.google.gson.JsonObject;
-import org.checkerframework.common.value.qual.IntRange;
 import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.JsonSerializable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
+import xyz.deftu.coffeecord.utils.ImageFormat;
 
 import java.util.List;
 
 public class User implements ISnowflake, JsonSerializable<JsonObject> {
+
+    private static final String AVATAR_URL = Coffeecord.CDN_URL + "avatars/%s/%s.%s";
+    private static final String BANNER_URL = Coffeecord.CDN_URL + "banners/%s/%s.%s";
 
     private final DiscordClient client;
 
@@ -54,16 +57,16 @@ public class User implements ISnowflake, JsonSerializable<JsonObject> {
         return username + "#" + discriminator;
     }
 
-    public String getAvatar() {
+    public String getAvatarRaw() {
         return avatar;
     }
 
-    public String getAvatarUrl(@IntRange(from = 64, to = 4096) int size) {
-        return Coffeecord.CDN_URL + "avatars/" + id + "/" + avatar + ".png?size=" + size;
+    public String getAvatarUrl(ImageFormat format) {
+        return String.format(AVATAR_URL, id, avatar, format.getExtension());
     }
 
     public String getAvatarUrl() {
-        return getAvatarUrl(2048);
+        return getAvatarUrl(ImageFormat.PNG);
     }
 
     public boolean isBot() {
@@ -74,12 +77,16 @@ public class User implements ISnowflake, JsonSerializable<JsonObject> {
         return system;
     }
 
-    public String getBanner() {
+    public String getBannerRaw() {
         return banner;
     }
 
+    public String getBannerUrl(ImageFormat format) {
+        return String.format(BANNER_URL, id, banner, format.getExtension());
+    }
+
     public String getBannerUrl() {
-        return Coffeecord.CDN_URL + "banners/" + id + "/" + banner + ".png";
+        return getBannerUrl(ImageFormat.PNG);
     }
 
     public List<UserFlag> getFlags() {

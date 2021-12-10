@@ -5,6 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import xyz.deftu.coffeecord.DiscordClient;
+import xyz.deftu.coffeecord.entities.channel.PrivateChannel;
+import xyz.deftu.coffeecord.entities.guild.Guild;
+import xyz.deftu.coffeecord.entities.guild.GuildFeature;
+import xyz.deftu.coffeecord.entities.guild.GuildPermission;
 import xyz.deftu.coffeecord.entities.message.Message;
 import xyz.deftu.coffeecord.entities.message.embed.*;
 import xyz.deftu.coffeecord.entities.message.MessageReference;
@@ -131,7 +135,7 @@ public class EntityCreator {
 
         // TODO - Attachments
 
-        return new Message(client, tts, timestamp, pinned, id, embeds, editedTimestamp, content, messageReference, author, channelId);
+        return new Message(client, tts, timestamp, pinned, id, embeds, editedTimestamp, content, messageReference, author, JsonHelper.getNumber(data, "channel_id").longValue());
     }
 
     public MessageEmbed createMessageEmbed(JsonObject data) {
@@ -216,6 +220,36 @@ public class EntityCreator {
         boolean inline = JsonHelper.getBoolean(data, "inline");
 
         return new MessageEmbedField(name, value, inline);
+    }
+
+    public Guild createGuild(JsonObject data) {
+        Number idRaw = JsonHelper.getNumber(data, "id");
+        long id = idRaw == null ? -1 : idRaw.longValue();
+
+        String name = JsonHelper.getString(data, "name");
+        String icon = JsonHelper.getString(data, "icon");
+        boolean owner = JsonHelper.getBoolean(data, "owner");
+
+        Number permissionsRaw = JsonHelper.getNumber(data, "permissions");
+        List<GuildPermission> permissions = permissionsRaw == null ? new ArrayList<>() : new ArrayList<>(GuildPermission.from(permissionsRaw.longValue()));
+
+        JsonArray featuresRaw = JsonHelper.getArray(data, "features");
+        List<GuildFeature> features = new ArrayList<>();
+        if (featuresRaw != null) {
+            for (JsonElement feature : featuresRaw) {
+                if (feature.isJsonPrimitive()) {
+                    JsonPrimitive primitive = feature.getAsJsonPrimitive();
+                    if (primitive.isString()) {
+                        try {
+                            features.add(GuildFeature.valueOf(primitive.getAsString()));
+                        } catch (Exception ignored) {
+                        }
+                    }
+                }
+            }
+        }
+
+        return new Guild(client, id, name, icon, owner, permissions, features);
     }
 
 }

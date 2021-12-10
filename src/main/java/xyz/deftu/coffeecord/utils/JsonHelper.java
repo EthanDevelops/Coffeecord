@@ -13,6 +13,14 @@ public class JsonHelper {
         }
     }
 
+    public static boolean isObject(String input) {
+        return isValid(input) && JsonParser.parseString(input).isJsonObject();
+    }
+
+    public static boolean isArray(String input) {
+        return isValid(input) && JsonParser.parseString(input).isJsonArray();
+    }
+
     public static JsonElement getElement(JsonObject object, String key) {
         if (object.has(key)) {
             return object.get(key);

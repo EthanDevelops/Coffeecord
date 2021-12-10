@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import xyz.deftu.coffeecord.entities.EntityCreator;
 import xyz.deftu.coffeecord.entities.ISnowflake;
+import xyz.deftu.coffeecord.entities.user.SelfUser;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
-import xyz.deftu.coffeecord.requests.RequestManager;
+import xyz.deftu.coffeecord.requests.RestRequester;
 import xyz.deftu.coffeecord.socket.DiscordSocket;
 import xyz.deftu.coffeecord.socket.impl.DiscordLoginPacket;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
@@ -30,7 +31,9 @@ public class DiscordClient implements ISnowflake {
     private final SimpleEventBus eventBus = new SimpleEventBus();
     private final DiscordEventParser eventParser;
     private final EntityCreator entityCreator;
-    private final RequestManager requestManager;
+    private final RestRequester restRequester;
+    private final SelfApplication selfApplication;
+    private final SelfUser selfUser;
 
     private int intents = 0;
 
@@ -39,7 +42,9 @@ public class DiscordClient implements ISnowflake {
         socket = new DiscordSocket(URI.create("wss://gateway.discord.gg/?v=9&encoding=json"), this);
         eventParser = new DiscordEventParser(this);
         entityCreator = new EntityCreator(this);
-        requestManager = new RequestManager(this);
+        restRequester = new RestRequester(this);
+        selfApplication = new SelfApplication(this);
+        selfUser = new SelfUser(this);
     }
 
     public DiscordClient() {
@@ -104,6 +109,10 @@ public class DiscordClient implements ISnowflake {
         return id;
     }
 
+    public SelfApplication getSelfApplication() {
+        return selfApplication;
+    }
+
     public DiscordSocket getSocket() {
         return socket;
     }
@@ -120,8 +129,12 @@ public class DiscordClient implements ISnowflake {
         return entityCreator;
     }
 
-    public RequestManager getRequestManager() {
-        return requestManager;
+    public RestRequester getRestRequester() {
+        return restRequester;
+    }
+
+    public SelfUser getSelfUser() {
+        return selfUser;
     }
 
     public void initializeId(long id) {

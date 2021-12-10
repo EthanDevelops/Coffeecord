@@ -2,15 +2,12 @@ package xyz.deftu.coffeecord.entities.message;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import okhttp3.MediaType;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.JsonSerializable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.entities.message.embed.MessageEmbed;
 import xyz.deftu.coffeecord.entities.user.User;
+import xyz.deftu.coffeecord.requests.types.MessageSendRequest;
 import xyz.deftu.deftils.Strings;
 import xyz.deftu.deftils.exceptions.UnfinishedApiException;
 
@@ -23,7 +20,7 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
 
     private final boolean tts;
     private final OffsetDateTime timestamp;
-    private boolean pinned;
+    private final boolean pinned;
     private final long id;
     private final List<MessageEmbed> embeds;
     private final OffsetDateTime editedTimestamp;
@@ -32,9 +29,9 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
 
     private final User author;
 
-    private final long channelId;
+    private final long channel;
 
-    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, List<MessageEmbed> embeds, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, long channelId) {
+    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, List<MessageEmbed> embeds, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, long channel) {
         this.client = client;
         this.tts = tts;
         this.timestamp = timestamp;
@@ -45,12 +42,15 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
         this.content = content;
         this.messageReference = messageReference;
         this.author = author;
-
-        this.channelId = channelId;
+        this.channel = channel;
     }
 
     public DiscordClient getClient() {
         return client;
+    }
+
+    public MessageBuilder asBuilder() {
+        return MessageBuilder.from(this);
     }
 
     public boolean isTts() {
@@ -71,6 +71,10 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
 
     public long getId() {
         return id;
+    }
+
+    public List<MessageEmbed> getEmbeds() {
+        return embeds;
     }
 
     public OffsetDateTime getEditedTimestamp() {
@@ -94,18 +98,18 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
         return author;
     }
 
-    public long getChannelId() {
-        return channelId;
+    public long getChannel() {
+        return channel;
     }
 
-    public void reply(Message message, long guildId) {
-        message = message.withReference(new MessageReference(getId(), channelId, guildId));
+    public Message reply(Message message, long guildId) {
+        message = message.withReference(new MessageReference(getId(), channel, guildId));
         DiscordClient client = getClient();
-        Request request = new Request.Builder()
-                .url(Coffeecord.API_URL + "/channels/" + channelId + "/messages")
-                .post(RequestBody.create(client.getGson().toJson(message.asJson()), MediaType.get("application/json")))
-                .build();
-        client.getRequestManager().request(request, true);
+        return client.getRestRequester().request(new MessageSendRequest(
+                client,
+                message,
+                channel
+        ));
     }
 
     public JsonObject asJson() {

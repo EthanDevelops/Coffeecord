@@ -40,13 +40,13 @@ configurations {
 dependencies {
     /* Internal. */
     shade('org.java-websocket:Java-WebSocket:1.5.2')
-    shade('com.squareup.okhttp3:okhttp:4.9.2')
-    shade('xyz.deftu.deftils:Deftils:1.0')
+    shade('com.squareup.okhttp3:okhttp:4.9.3')
+    shade('xyz.deftu.deftils:Deftils:1.2.0')
     shade('com.google.code.gson:gson:2.8.9')
 
     /* Utility. */
     shade('xyz.deftu.eventbus:SimpleEventBus:1.0')
-    shade('com.github.ben-manes.caffeine:caffeine:2.9.2')
+    shade('com.github.ben-manes.caffeine:caffeine:2.9.3') /* We stay on v2 because v3+ isn't on Java 8 */
 
     /* Logging. */
     shade('org.apache.logging.log4j:log4j-api:2.14.1')

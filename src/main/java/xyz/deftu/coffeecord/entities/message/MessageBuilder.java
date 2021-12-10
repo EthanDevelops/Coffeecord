@@ -65,4 +65,11 @@ public class MessageBuilder {
         return new Message(null, tts, null, false, -1, embeds, null, content, null, null, -1);
     }
 
+    public static MessageBuilder from(Message message) {
+        return new MessageBuilder()
+                .setTts(message.isTts())
+                .setContent(message.getContent())
+                .setEmbeds(message.getEmbeds());
+    }
+
 }

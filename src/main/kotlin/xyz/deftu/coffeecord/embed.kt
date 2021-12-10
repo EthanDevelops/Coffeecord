@@ -14,7 +14,6 @@ class MessageEmbedBuilderBuilder {
     var url: String? = null
     var timestamp: OffsetDateTime? = null
     var colour = 0
-    var fields: List<MessageEmbedField> = mutableListOf()
 
     fun footer(builder: MessageEmbedFooterBuilder.() -> Unit) {
         this.builder.footer = MessageEmbedFooterBuilder()
@@ -36,14 +35,13 @@ class MessageEmbedBuilderBuilder {
         this.builder.author = MessageEmbedAuthorBuilder()
             .apply(builder).build()
     }
-    fun field(builder: MessageEmbedFieldBuilder.() -> Unit): MessageEmbedField =
-        MessageEmbedFieldBuilder()
+    fun fields(builder: MessageEmbedFieldListBuilder.() -> Unit) {
+        this.builder.fields = MessageEmbedFieldListBuilder()
             .apply(builder).build()
-
-    fun build(): MessageEmbedBuilder {
-        builder.fields = fields
-        return builder
     }
+
+    fun build(): MessageEmbedBuilder =
+        builder
 }
 
 class MessageEmbedFooterBuilder {
@@ -70,6 +68,15 @@ class MessageEmbedAuthorBuilder {
     var proxyIconUrl: String? = null
     fun build(): MessageEmbedAuthor =
         MessageEmbedAuthor(name, url, iconUrl, proxyIconUrl)
+}
+
+class MessageEmbedFieldListBuilder {
+    private val fields = mutableListOf<MessageEmbedField>()
+    fun field(builder: MessageEmbedFieldBuilder.() -> Unit) =
+        fields.add(MessageEmbedFieldBuilder()
+            .apply(builder).build())
+    fun build(): List<MessageEmbedField> =
+        fields
 }
 
 class MessageEmbedFieldBuilder {

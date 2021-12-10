@@ -5,13 +5,15 @@ import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.events.internal.impl.MessageCreateEventHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DiscordEventParser {
 
     private final DiscordClient client;
-    private final Map<String, BaseEventHandler> handlerRegistry = new HashMap<>();
+    private final Map<String, List<BaseEventHandler>> handlerRegistry = new HashMap<>();
 
     public DiscordEventParser(DiscordClient client) {
         this.client = client;
@@ -25,9 +27,13 @@ public class DiscordEventParser {
         if (content.has("t")) {
             JsonElement name = content.get("t");
             if (name.isJsonPrimitive()) {
-                BaseEventHandler handler = handlerRegistry.get(name.getAsString());
-                if (handler != null) {
-                    handler.handle(data);
+                List<BaseEventHandler> handlers = handlerRegistry.get(name.getAsString());
+                if (handlers != null) {
+                    for (BaseEventHandler handler : handlers) {
+                        if (handler != null) {
+                            handler.handle(data);
+                        }
+                    }
                 }
             }
         }
@@ -37,12 +43,13 @@ public class DiscordEventParser {
         return client;
     }
 
-    public Map<String, BaseEventHandler> getHandlerRegistry() {
+    public Map<String, List<BaseEventHandler>> getHandlerRegistry() {
         return handlerRegistry;
     }
 
     public void addHandler(String name, BaseEventHandler handler) {
-        handlerRegistry.putIfAbsent(name, handler);
+        handlerRegistry.putIfAbsent(name, new ArrayList<>());
+        handlerRegistry.get(name).add(handler);
     }
 
 }
