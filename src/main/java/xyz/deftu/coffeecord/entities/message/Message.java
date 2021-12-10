@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.JsonSerializable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
+import xyz.deftu.coffeecord.entities.channel.BaseChannel;
 import xyz.deftu.coffeecord.entities.message.embed.MessageEmbed;
 import xyz.deftu.coffeecord.entities.user.User;
 import xyz.deftu.coffeecord.requests.types.MessageSendRequest;
@@ -29,9 +30,9 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
 
     private final User author;
 
-    private final long channel;
+    private final BaseChannel channel;
 
-    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, List<MessageEmbed> embeds, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, long channel) {
+    public Message(DiscordClient client, boolean tts, OffsetDateTime timestamp, boolean pinned, long id, List<MessageEmbed> embeds, OffsetDateTime editedTimestamp, String content, MessageReference messageReference, User author, BaseChannel channel) {
         this.client = client;
         this.tts = tts;
         this.timestamp = timestamp;
@@ -98,17 +99,17 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
         return author;
     }
 
-    public long getChannel() {
+    public BaseChannel getChannel() {
         return channel;
     }
 
-    public Message reply(Message message, long guildId) {
-        message = message.withReference(new MessageReference(getId(), channel, guildId));
+    public Message reply(Message message) {
+        message = message.withReference(new MessageReference(getId(), channel.getId()));
         DiscordClient client = getClient();
         return client.getRestRequester().request(new MessageSendRequest(
                 client,
                 message,
-                channel
+                channel.getId()
         ));
     }
 

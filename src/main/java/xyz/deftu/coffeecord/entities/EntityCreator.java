@@ -5,7 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.deftu.coffeecord.entities.channel.PrivateChannel;
+import xyz.deftu.coffeecord.entities.channel.*;
+import xyz.deftu.coffeecord.entities.channel.direct.BasePrivateChannel;
+import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel;
+import xyz.deftu.coffeecord.entities.channel.direct.PrivateGroupChannel;
+import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel;
 import xyz.deftu.coffeecord.entities.guild.Guild;
 import xyz.deftu.coffeecord.entities.guild.GuildFeature;
 import xyz.deftu.coffeecord.entities.guild.GuildPermission;
@@ -13,6 +17,8 @@ import xyz.deftu.coffeecord.entities.message.Message;
 import xyz.deftu.coffeecord.entities.message.embed.*;
 import xyz.deftu.coffeecord.entities.message.MessageReference;
 import xyz.deftu.coffeecord.entities.user.User;
+import xyz.deftu.coffeecord.requests.types.ChannelRequest;
+import xyz.deftu.coffeecord.requests.types.GuildRequest;
 import xyz.deftu.coffeecord.utils.JsonHelper;
 
 import java.time.OffsetDateTime;
@@ -135,7 +141,9 @@ public class EntityCreator {
 
         // TODO - Attachments
 
-        return new Message(client, tts, timestamp, pinned, id, embeds, editedTimestamp, content, messageReference, author, JsonHelper.getNumber(data, "channel_id").longValue());
+        BaseChannel channel = channelId == -1 ? null : client.getRestRequester().request(new ChannelRequest(client, channelId));
+
+        return new Message(client, tts, timestamp, pinned, id, embeds, editedTimestamp, content, messageReference, author, channel == null ? new LimitedChannel(client, channelId) : channel);
     }
 
     public MessageEmbed createMessageEmbed(JsonObject data) {
@@ -220,6 +228,85 @@ public class EntityCreator {
         boolean inline = JsonHelper.getBoolean(data, "inline");
 
         return new MessageEmbedField(name, value, inline);
+    }
+
+    public BaseChannel createChannel(JsonObject data) {
+        Number idRaw = JsonHelper.getNumber(data, "id");
+        long id = idRaw == null ? -1 : idRaw.longValue();
+
+        Number typeRaw = JsonHelper.getNumber(data, "type");
+        ChannelType type = typeRaw == null ? ChannelType.UNKNOWN : ChannelType.from(typeRaw.intValue());
+
+        if (type == ChannelType.UNKNOWN) {
+            throw new IllegalStateException("Couldn't determine type of a channel.");
+        }
+
+        return type.isGuild() ? createGuildChannel(data, id, type) : (type.isDirect() ? createPrivateChannel(data, id, type) : createLimitedChannel(id));
+    }
+
+    public GuildChannel createGuildChannel(JsonObject data, long id, ChannelType type) {
+        Number guildIdRaw = JsonHelper.getNumber(data, "guild_id");
+        Guild guild = guildIdRaw == null ? null : client.getRestRequester().request(new GuildRequest(client, guildIdRaw.longValue()));
+        return type == ChannelType.GUILD_TEXT ?
+                createGuildTextChannel(data, id, guild) :
+                null;
+    }
+
+    public GuildTextChannel createGuildTextChannel(JsonObject data, long id, Guild guild) {
+        String name = JsonHelper.getString(data, "name");
+
+        Number positionRaw = JsonHelper.getNumber(data, "position");
+        int position = positionRaw == null ? -1 : positionRaw.intValue();
+
+        JsonArray permissionOverwritesRaw = JsonHelper.getArray(data, "permission_overwrites");
+        List<GuildPermission> permissionOverwrites = new ArrayList<>();
+        if (permissionOverwritesRaw != null) {
+            for (JsonElement overwrite : permissionOverwritesRaw) {
+                System.out.println(overwrite);
+            }
+        }
+
+        Number parentIdRaw = JsonHelper.getNumber(data, "parent_id");
+        long parentId = parentIdRaw == null ? -1 : parentIdRaw.longValue();
+
+        Number rateLimitPerUserRaw = JsonHelper.getNumber(data, "rate_limit_per_user");
+        int cooldown = rateLimitPerUserRaw == null ? -1 : rateLimitPerUserRaw.intValue();
+
+        boolean nsfw = JsonHelper.getBoolean(data, "nsfw");
+        String topic = JsonHelper.getString(data, "topic");
+
+        return new GuildTextChannel(client, id, guild, name, position, permissionOverwrites, parentId, cooldown, nsfw, topic);
+    }
+
+    public BasePrivateChannel createPrivateChannel(JsonObject data, long id, ChannelType type) {
+        Number lastMessageIdRaw = JsonHelper.getNumber(data, "last_message_id");
+        long lastMessageId = lastMessageIdRaw == null ? -1 : lastMessageIdRaw.longValue();
+
+        JsonArray recipientsRaw = JsonHelper.getArray(data, "recipients");
+        List<User> recipients = new ArrayList<>();
+        if (recipientsRaw != null) {
+            for (JsonElement recipient : recipientsRaw) {
+                if (recipient.isJsonObject()) {
+                    recipients.add(createUser(recipient.getAsJsonObject()));
+                }
+            }
+        }
+
+        return type == ChannelType.DIRECT ? new PrivateChannel(client, id, lastMessageId, recipients.size() == 1 ? recipients.get(0) : null) : createPrivateGroupChannel(data, id, lastMessageId, recipients);
+    }
+
+    public PrivateGroupChannel createPrivateGroupChannel(JsonObject data, long id, long lastMessageId, List<User> recipients) {
+        String name = JsonHelper.getString(data, "name");
+        String icon = JsonHelper.getString(data, "icon");
+
+        Number ownerIdRaw = JsonHelper.getNumber(data, "owner_id");
+        long ownerId = ownerIdRaw == null ? -1 : ownerIdRaw.longValue();
+
+        return new PrivateGroupChannel(client, id, lastMessageId, name, icon, recipients, ownerId);
+    }
+
+    public LimitedChannel createLimitedChannel(long id) {
+        return new LimitedChannel(client, id);
     }
 
     public Guild createGuild(JsonObject data) {

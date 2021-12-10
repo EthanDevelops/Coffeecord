@@ -2,11 +2,9 @@ package xyz.deftu.coffeecord.requests.types;
 
 import com.google.gson.JsonObject;
 import okhttp3.Headers;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.deftu.coffeecord.SelfApplication;
 import xyz.deftu.coffeecord.requests.RequestRoute;
 import xyz.deftu.coffeecord.requests.RestBody;
 import xyz.deftu.coffeecord.requests.RestRequest;

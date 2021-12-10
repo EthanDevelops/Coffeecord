@@ -15,6 +15,10 @@ public class MessageReference implements JsonSerializable<JsonObject> {
         this.guildId = guildId;
     }
 
+    public MessageReference(long messageId, long channelId) {
+        this(messageId, channelId, -1);
+    }
+
     public long getMessageId() {
         return messageId;
     }

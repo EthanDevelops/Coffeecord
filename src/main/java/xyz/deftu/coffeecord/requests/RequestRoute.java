@@ -29,12 +29,19 @@ public class RequestRoute {
         return Coffeecord.API_URL + "/" + route;
     }
 
+    public static class User {
+        public static final RequestRoute GET_USER = new RequestRoute(GET, "users/{}");
+    }
+
     public static class Guild {
+        public static final RequestRoute GET_GUILD = new RequestRoute(GET, "guilds/{}");
         public static final RequestRoute GET_VOICE_REGIONS = new RequestRoute(GET, "guilds/{}/regions");
     }
 
     public static class Channel {
+        public static final RequestRoute GET_CHANNEL = new RequestRoute(GET, "channels/{}");
         public static final RequestRoute SEND_MESSAGE = new RequestRoute(POST, "channels/{}/messages");
+        public static final RequestRoute GET_MESSAGE = new RequestRoute(GET, "channels/{}/messages/{}");
     }
 
     public static class Self {
