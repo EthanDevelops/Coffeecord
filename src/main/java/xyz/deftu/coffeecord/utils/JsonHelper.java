@@ -84,15 +84,6 @@ public class JsonHelper {
         }
     }
 
-    public static Number getNumber(JsonObject object, String key) {
-        JsonPrimitive primitive = getPrimitive(object, key);
-        if (primitive != null && (primitive.isNumber() || primitive.isString())) {
-            return primitive.getAsNumber();
-        } else {
-            return null;
-        }
-    }
-
     public static boolean getBoolean(JsonObject object, String key) {
         JsonPrimitive primitive = getPrimitive(object, key);
         if (primitive != null && primitive.isBoolean()) {
@@ -109,6 +100,45 @@ public class JsonHelper {
         } else {
             return '.';
         }
+    }
+
+    public static Number getNumber(JsonObject object, String key) {
+        JsonPrimitive primitive = getPrimitive(object, key);
+        if (primitive != null && (primitive.isNumber() || primitive.isString())) {
+            return primitive.getAsNumber();
+        } else {
+            return null;
+        }
+    }
+
+    public static int getInt(JsonObject object, String key) {
+        Number number = getNumber(object, key);
+        return number == null ? -1 : number.intValue();
+    }
+
+    public static long getLong(JsonObject object, String key) {
+        Number number = getNumber(object, key);
+        return number == null ? -1 : number.longValue();
+    }
+
+    public static float getFloat(JsonObject object, String key) {
+        Number number = getNumber(object, key);
+        return number == null ? -1 : number.floatValue();
+    }
+
+    public static double getDouble(JsonObject object, String key) {
+        Number number = getNumber(object, key);
+        return number == null ? -1 : number.doubleValue();
+    }
+
+    public static byte getByte(JsonObject object, String key) {
+        Number number = getNumber(object, key);
+        return number == null ? -1 : number.byteValue();
+    }
+
+    public static short getShort(JsonObject object, String key) {
+        Number number = getNumber(object, key);
+        return number == null ? -1 : number.shortValue();
     }
 
 }

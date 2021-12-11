@@ -1,10 +1,7 @@
 package xyz.deftu.coffeecord
 
-import xyz.deftu.coffeecord.commands.impl.slash.SlashCommand
-import xyz.deftu.coffeecord.entities.channel.GuildChannel
-import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel
 import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel
-import xyz.deftu.coffeecord.events.MessageReceivedEvent
+import xyz.deftu.coffeecord.events.initialization.GuildReadyEvent
 import xyz.deftu.coffeecord.presence.Activity
 import xyz.deftu.coffeecord.presence.OnlineStatus
 import xyz.deftu.coffeecord.socket.GatewayIntent
@@ -28,6 +25,10 @@ class TestBotKt {
             name = "test"
             description = "Simple test command for Coffeecord."
         })
+    }
+
+    @SubscribeEvent
+    private fun onGuildReady(event: GuildReadyEvent) {
     }
 
 }

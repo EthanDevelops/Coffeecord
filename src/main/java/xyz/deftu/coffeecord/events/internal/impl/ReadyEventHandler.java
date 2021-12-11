@@ -1,6 +1,7 @@
 package xyz.deftu.coffeecord.events.internal.impl;
 
 import com.google.gson.JsonObject;
+import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.events.internal.BaseEventHandler;
 import xyz.deftu.coffeecord.utils.JsonHelper;

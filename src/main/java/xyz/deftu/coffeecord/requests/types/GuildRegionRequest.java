@@ -16,6 +16,7 @@ import xyz.deftu.coffeecord.requests.RestRequest;
 import xyz.deftu.coffeecord.utils.JsonHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GuildRegionRequest extends RestRequest<List<Region>> {
@@ -50,7 +51,7 @@ public class GuildRegionRequest extends RestRequest<List<Region>> {
                 }
             }
 
-            return value;
+            return Collections.unmodifiableList(value);
         } else {
             return null;
         }

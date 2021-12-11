@@ -1,6 +1,6 @@
 package xyz.deftu.coffeecord;
 
-import xyz.deftu.coffeecord.events.MessageReceivedEvent;
+import xyz.deftu.coffeecord.events.messages.MessageReceivedEvent;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
 import xyz.deftu.eventbus.SubscribeEvent;
 

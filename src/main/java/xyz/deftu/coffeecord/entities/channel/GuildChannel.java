@@ -3,7 +3,7 @@ package xyz.deftu.coffeecord.entities.channel;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.channel.guild.GuildCategory;
 import xyz.deftu.coffeecord.entities.guild.Guild;
-import xyz.deftu.coffeecord.entities.guild.GuildPermission;
+import xyz.deftu.coffeecord.entities.guild.PermissionOverwrite;
 import xyz.deftu.coffeecord.requests.types.ChannelRequest;
 import xyz.deftu.coffeecord.requests.types.GuildRequest;
 
@@ -16,11 +16,11 @@ public abstract class GuildChannel extends BaseChannel {
 
     private final String name;
     private final int position;
-    private final List<GuildPermission> permissionOverwrites;
+    private final List<PermissionOverwrite> permissionOverwrites;
     private final long parentId;
     private GuildCategory parentCache;
 
-    public GuildChannel(DiscordClient client, long id, Guild guild, String name, int position, List<GuildPermission> permissionOverwrites, long parentId) {
+    public GuildChannel(DiscordClient client, long id, Guild guild, String name, int position, List<PermissionOverwrite> permissionOverwrites, long parentId) {
         super(client);
         this.id = id;
         this.guild = guild;
@@ -30,7 +30,7 @@ public abstract class GuildChannel extends BaseChannel {
         this.parentId = parentId;
     }
 
-    public GuildChannel(DiscordClient client, long id, long guildId, String name, int position, List<GuildPermission> permissionOverwrites, long parentId) {
+    public GuildChannel(DiscordClient client, long id, long guildId, String name, int position, List<PermissionOverwrite> permissionOverwrites, long parentId) {
         this(client, id, client.getRestRequester().request(new GuildRequest(client, guildId)), name, position, permissionOverwrites, parentId);
     }
 
@@ -50,7 +50,7 @@ public abstract class GuildChannel extends BaseChannel {
         return position;
     }
 
-    public List<GuildPermission> getPermissionOverwrites() {
+    public List<PermissionOverwrite> getPermissionOverwrites() {
         return permissionOverwrites;
     }
 

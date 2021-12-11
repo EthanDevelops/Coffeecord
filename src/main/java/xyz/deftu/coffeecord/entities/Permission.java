@@ -1,4 +1,4 @@
-package xyz.deftu.coffeecord.entities.guild;
+package xyz.deftu.coffeecord.entities;
 
 import xyz.deftu.deftils.exceptions.UnfinishedApiException;
 
@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import static xyz.deftu.coffeecord.entities.guild.GuildPermission.PermissionType.*;
+import static xyz.deftu.coffeecord.entities.Permission.PermissionType.*;
 
-public enum GuildPermission {
+public enum Permission {
 
     CREATE_INSTANT_INVITE(0, BOTH, "Create Instant Invite"),
     KICK_MEMBERS(1, GUILD,"Kick Members"),
@@ -57,7 +57,7 @@ public enum GuildPermission {
     private final PermissionType type;
     private final String name;
 
-    GuildPermission(int offset, PermissionType type, String name) {
+    Permission(int offset, PermissionType type, String name) {
         this.offset = offset;
         this.raw = 1L << offset;
         this.type = type;
@@ -76,11 +76,11 @@ public enum GuildPermission {
         return name;
     }
 
-    public static EnumSet<GuildPermission> from(long raw) {
-        EnumSet<GuildPermission> value = EnumSet.noneOf(GuildPermission.class);
+    public static EnumSet<Permission> from(long raw) {
+        EnumSet<Permission> value = EnumSet.noneOf(Permission.class);
         if (raw == 0)
             return value;
-        for (GuildPermission permission : values()) {
+        for (Permission permission : values()) {
             if (permission != UNKNOWN && (raw & permission.raw) == permission.raw) {
                 value.add(permission);
             }
@@ -89,11 +89,11 @@ public enum GuildPermission {
         return value;
     }
 
-    public static long raw(List<GuildPermission> permissions) {
+    public static long raw(List<Permission> permissions) {
         throw new UnfinishedApiException();
     }
 
-    public static long raw(GuildPermission... permissions) {
+    public static long raw(Permission... permissions) {
         return raw(Arrays.asList(permissions));
     }
 

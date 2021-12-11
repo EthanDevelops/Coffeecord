@@ -15,7 +15,7 @@ sourceCompatibility = targetCompatibility = 1.8
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.4"
+        languageVersion = "1.6"
     }
 }
 
@@ -60,9 +60,9 @@ dependencies {
     shade('com.github.ben-manes.caffeine:caffeine:2.9.3') /* We stay on v2 because v3+ isn't on Java 8 */
 
     /* Logging. */
-    shade('org.apache.logging.log4j:log4j-api:2.14.1')
-    shade('org.apache.logging.log4j:log4j-core:2.14.1')
-    shade('org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1')
+    shade('org.apache.logging.log4j:log4j-api:2.15.0')
+    shade('org.apache.logging.log4j:log4j-core:2.15.0')
+    shade('org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0')
 
     /* Compatibility. */
     shade('org.jetbrains.kotlin:kotlin-stdlib-jdk8')

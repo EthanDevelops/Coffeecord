@@ -2,10 +2,8 @@ package xyz.deftu.coffeecord.events.internal.impl;
 
 import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.deftu.coffeecord.events.MessageReceivedEvent;
+import xyz.deftu.coffeecord.events.messages.MessageReceivedEvent;
 import xyz.deftu.coffeecord.events.internal.BaseEventHandler;
-
-import java.time.OffsetDateTime;
 
 public class MessageCreateEventHandler extends BaseEventHandler {
 

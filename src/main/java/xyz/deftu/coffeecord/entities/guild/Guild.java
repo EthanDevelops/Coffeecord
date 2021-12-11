@@ -2,7 +2,9 @@ package xyz.deftu.coffeecord.entities.guild;
 
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.commands.DiscordCommandManager;
+import xyz.deftu.coffeecord.entities.Permission;
 import xyz.deftu.coffeecord.entities.ISnowflake;
+import xyz.deftu.coffeecord.entities.channel.GuildChannel;
 import xyz.deftu.coffeecord.requests.types.GuildRegionRequest;
 import xyz.deftu.coffeecord.utils.ImageFormat;
 
@@ -19,10 +21,10 @@ public class Guild implements ISnowflake {
     private final String name;
     private final String icon;
     private final boolean owner;
-    private final List<GuildPermission> permissions;
+    private final List<Permission> permissions;
     private final List<GuildFeature> features;
 
-    public Guild(DiscordClient client, long id, String name, String icon, boolean owner, List<GuildPermission> permissions, List<GuildFeature> features) {
+    public Guild(DiscordClient client, long id, String name, String icon, boolean owner, List<Permission> permissions, List<GuildFeature> features) {
         this.client = client;
         this.id = id;
         this.commandManager = new DiscordCommandManager(client, this);
@@ -40,6 +42,14 @@ public class Guild implements ISnowflake {
 
     public long getId() {
         return id;
+    }
+
+    public List<GuildChannel> getChannels() {
+        return client.getDiscordCache().getGuildChannels(id);
+    }
+
+    public GuildChannel getChannelById(long id) {
+        return (GuildChannel) client.getDiscordCache().getChannel(id);
     }
 
     public DiscordCommandManager getCommandManager() {
@@ -74,7 +84,7 @@ public class Guild implements ISnowflake {
         return owner;
     }
 
-    public List<GuildPermission> getPermissions() {
+    public List<Permission> getPermissions() {
         return permissions;
     }
 

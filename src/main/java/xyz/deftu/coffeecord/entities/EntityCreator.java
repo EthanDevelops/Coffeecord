@@ -15,7 +15,8 @@ import xyz.deftu.coffeecord.entities.channel.guild.GuildCategory;
 import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel;
 import xyz.deftu.coffeecord.entities.guild.Guild;
 import xyz.deftu.coffeecord.entities.guild.GuildFeature;
-import xyz.deftu.coffeecord.entities.guild.GuildPermission;
+import xyz.deftu.coffeecord.entities.guild.PermissionOverwrite;
+import xyz.deftu.coffeecord.entities.guild.PermissionOverwriteType;
 import xyz.deftu.coffeecord.entities.message.Message;
 import xyz.deftu.coffeecord.entities.message.embed.*;
 import xyz.deftu.coffeecord.entities.message.MessageReference;
@@ -38,23 +39,20 @@ public class EntityCreator {
     }
 
     public SelfUser createSelfUser(JsonObject data) {
-        Number idRaw = JsonHelper.getNumber(data, "id");
-        long id = idRaw == null ? -1 : idRaw.longValue();
+        long id = JsonHelper.getLong(data, "id");
 
         String username = JsonHelper.getString(data, "username");
         String discriminator = JsonHelper.getString(data, "discriminator");
         String avatar = JsonHelper.getString(data, "avatar");
         String banner = JsonHelper.getString(data, "banner");
 
-        Number flagsRaw = JsonHelper.getNumber(data, "flags");
-        int flags = flagsRaw == null ? -1 : flagsRaw.intValue();
+        int flags = JsonHelper.getInt(data, "flags");
 
         return new SelfUser(client, id, username, discriminator, avatar, banner, flags);
     }
 
     public DiscordApplication createDiscordApplication(JsonObject data) {
-        Number idRaw = JsonHelper.getNumber(data, "id");
-        long id = idRaw == null ? -1 : idRaw.longValue();
+        long id = JsonHelper.getLong(data, "id");
 
         return new DiscordApplication(id);
     }
@@ -64,8 +62,7 @@ public class EntityCreator {
     }
 
     public User createUser(JsonObject data) {
-        Number idRaw = JsonHelper.getNumber(data, "id");
-        long id = idRaw == null ? -1 : idRaw.longValue();
+        long id = JsonHelper.getLong(data, "id");
 
         String username = JsonHelper.getString(data, "username");
         String discriminator = JsonHelper.getString(data, "discriminator");
@@ -74,8 +71,7 @@ public class EntityCreator {
         boolean system = JsonHelper.getBoolean(data, "system");
         String banner = JsonHelper.getString(data, "banner");
 
-        Number flagsRaw = JsonHelper.getNumber(data, "flags");
-        int flags = flagsRaw == null ? -1 : flagsRaw.intValue();
+        int flags = JsonHelper.getInt(data, "flags");
 
         return new User(client, id, username, discriminator, avatar, bot, system, banner, flags);
     }
@@ -95,8 +91,7 @@ public class EntityCreator {
         // TODO - Mentions everyone
         // TODO - Member
 
-        Number idRaw = JsonHelper.getNumber(data, "id");
-        long id = idRaw == null ? -1 : idRaw.longValue();
+        long id = JsonHelper.getLong(data, "id");
 
         // TODO - Flags
 
@@ -120,8 +115,7 @@ public class EntityCreator {
 
         // TODO - Components
 
-        Number channelIdRaw = JsonHelper.getNumber(data, "channel_id");
-        long channelId = channelIdRaw == null ? -1 : channelIdRaw.longValue();
+        long channelId = JsonHelper.getLong(data, "channel_id");
 
         MessageReference messageReference = null;
         if (data.has("message_reference")) {
@@ -195,8 +189,7 @@ public class EntityCreator {
         String timestampRaw = JsonHelper.getString(data, "timestamp");
         OffsetDateTime timestamp = timestampRaw == null ? null : OffsetDateTime.parse(timestampRaw);
 
-        Number colourRaw = JsonHelper.getNumber(data, "color");
-        int colour = colourRaw == null ? 0 : colourRaw.intValue();
+        int colour = JsonHelper.getInt(data, "color");
 
         JsonObject footerRaw = JsonHelper.getObject(data, "footer");
         MessageEmbedFooter footer = footerRaw == null ? null : createMessageEmbedFooter(footerRaw);
@@ -240,12 +233,8 @@ public class EntityCreator {
     public MessageEmbedMedia createMessageEmbedMedia(JsonObject data) {
         String url = JsonHelper.getString(data, "url");
         String proxyUrl = JsonHelper.getString(data, "proxy_url");
-
-        Number widthRaw = JsonHelper.getNumber(data, "width");
-        int width = widthRaw == null ? -1 : widthRaw.intValue();
-
-        Number heightRaw = JsonHelper.getNumber(data, "height");
-        int height = heightRaw == null ? -1 : heightRaw.intValue();
+        int width = JsonHelper.getInt(data, "width");
+        int height = JsonHelper.getInt(data, "height");
 
         return new MessageEmbedMedia(url, proxyUrl, width, height);
     }
@@ -268,11 +257,8 @@ public class EntityCreator {
     }
 
     public BaseChannel createChannel(JsonObject data) {
-        Number idRaw = JsonHelper.getNumber(data, "id");
-        long id = idRaw == null ? -1 : idRaw.longValue();
-
-        Number typeRaw = JsonHelper.getNumber(data, "type");
-        ChannelType type = typeRaw == null ? ChannelType.UNKNOWN : ChannelType.from(typeRaw.intValue());
+        long id = JsonHelper.getLong(data, "id");
+        ChannelType type = ChannelType.from(JsonHelper.getInt(data, "type"));
 
         if (type == ChannelType.UNKNOWN) {
             throw new IllegalStateException("Couldn't determine type of a channel.");
@@ -282,13 +268,12 @@ public class EntityCreator {
     }
 
     public GuildChannel createGuildChannel(JsonObject data, long id, ChannelType type) {
-        Number guildIdRaw = JsonHelper.getNumber(data, "guild_id");
+        long guildId = JsonHelper.getLong(data, "guild_id");
         Guild guild = null;
-        if (guildIdRaw != null) {
-            long guildId = guildIdRaw.longValue();
+        if (guildId != -1) {
             Guild cached = guild = client.getDiscordCache().getGuild(guildId);
             if (cached == null) {
-                Guild fetched = guild = client.getRestRequester().request(new GuildRequest(client, guildIdRaw.longValue()));
+                Guild fetched = guild = client.getRestRequester().request(new GuildRequest(client, guildId));
                 client.getDiscordCache().addGuild(fetched.getId(), fetched);
             }
         }
@@ -302,24 +287,20 @@ public class EntityCreator {
 
     public GuildTextChannel createGuildTextChannel(JsonObject data, long id, Guild guild) {
         String name = JsonHelper.getString(data, "name");
-
-        Number positionRaw = JsonHelper.getNumber(data, "position");
-        int position = positionRaw == null ? -1 : positionRaw.intValue();
+        int position = JsonHelper.getInt(data, "position");
 
         JsonArray permissionOverwritesRaw = JsonHelper.getArray(data, "permission_overwrites");
-        List<GuildPermission> permissionOverwrites = new ArrayList<>();
+        List<PermissionOverwrite> permissionOverwrites = new ArrayList<>();
         if (permissionOverwritesRaw != null) {
             for (JsonElement overwrite : permissionOverwritesRaw) {
-                System.out.println("Permission overwrite: " + overwrite);
+                if (overwrite.isJsonObject()) {
+                    permissionOverwrites.add(createPermissionOverwrite(overwrite.getAsJsonObject()));
+                }
             }
         }
 
-        Number parentIdRaw = JsonHelper.getNumber(data, "parent_id");
-        long parentId = parentIdRaw == null ? -1 : parentIdRaw.longValue();
-
-        Number rateLimitPerUserRaw = JsonHelper.getNumber(data, "rate_limit_per_user");
-        int cooldown = rateLimitPerUserRaw == null ? -1 : rateLimitPerUserRaw.intValue();
-
+        long parentId = JsonHelper.getLong(data, "parent_id");
+        int cooldown = JsonHelper.getInt(data, "rate_limit_per_user");
         boolean nsfw = JsonHelper.getBoolean(data, "nsfw");
         String topic = JsonHelper.getString(data, "topic");
 
@@ -328,15 +309,15 @@ public class EntityCreator {
 
     public GuildCategory createGuildCategory(JsonObject data, long id, Guild guild) {
         String name = JsonHelper.getString(data, "name");
-
-        Number positionRaw = JsonHelper.getNumber(data, "position");
-        int position = positionRaw == null ? -1 : positionRaw.intValue();
+        int position = JsonHelper.getInt(data, "position");
 
         JsonArray permissionOverwritesRaw = JsonHelper.getArray(data, "permission_overwrites");
-        List<GuildPermission> permissionOverwrites = new ArrayList<>();
+        List<PermissionOverwrite> permissionOverwrites = new ArrayList<>();
         if (permissionOverwritesRaw != null) {
             for (JsonElement overwrite : permissionOverwritesRaw) {
-                System.out.println("Permission overwrite: " + overwrite);
+                if (overwrite.isJsonObject()) {
+                    permissionOverwrites.add(createPermissionOverwrite(overwrite.getAsJsonObject()));
+                }
             }
         }
 
@@ -344,8 +325,7 @@ public class EntityCreator {
     }
 
     public BasePrivateChannel createPrivateChannel(JsonObject data, long id, ChannelType type) {
-        Number lastMessageIdRaw = JsonHelper.getNumber(data, "last_message_id");
-        long lastMessageId = lastMessageIdRaw == null ? -1 : lastMessageIdRaw.longValue();
+        long lastMessageId = JsonHelper.getLong(data, "last_message_id");
 
         JsonArray recipientsRaw = JsonHelper.getArray(data, "recipients");
         List<User> recipients = new ArrayList<>();
@@ -363,9 +343,7 @@ public class EntityCreator {
     public PrivateGroupChannel createPrivateGroupChannel(JsonObject data, long id, long lastMessageId, List<User> recipients) {
         String name = JsonHelper.getString(data, "name");
         String icon = JsonHelper.getString(data, "icon");
-
-        Number ownerIdRaw = JsonHelper.getNumber(data, "owner_id");
-        long ownerId = ownerIdRaw == null ? -1 : ownerIdRaw.longValue();
+        long ownerId = JsonHelper.getLong(data, "owner_id");
 
         return new PrivateGroupChannel(client, id, lastMessageId, name, icon, recipients, ownerId);
     }
@@ -374,16 +352,26 @@ public class EntityCreator {
         return new LimitedChannel(client, id);
     }
 
+    public PermissionOverwrite createPermissionOverwrite(JsonObject data) {
+        long id = JsonHelper.getLong(data, "id");
+        int typeRaw = JsonHelper.getInt(data, "type");
+        PermissionOverwriteType type = PermissionOverwriteType.from(typeRaw);
+        long allowRaw = JsonHelper.getLong(data, "allow");
+        List<Permission> allow = allowRaw == -1 ? new ArrayList<>() : new ArrayList<>(Permission.from(allowRaw));
+        long denyRaw = JsonHelper.getLong(data, "deny");
+        List<Permission> deny = denyRaw == -1 ? new ArrayList<>() : new ArrayList<>(Permission.from(denyRaw));
+
+        return new PermissionOverwrite(id, type, allow, deny);
+    }
+
     public Guild createGuild(JsonObject data) {
-        Number idRaw = JsonHelper.getNumber(data, "id");
-        long id = idRaw == null ? -1 : idRaw.longValue();
+        long id = JsonHelper.getLong(data, "id");
 
         String name = JsonHelper.getString(data, "name");
         String icon = JsonHelper.getString(data, "icon");
         boolean owner = JsonHelper.getBoolean(data, "owner");
 
-        Number permissionsRaw = JsonHelper.getNumber(data, "permissions");
-        List<GuildPermission> permissions = permissionsRaw == null ? new ArrayList<>() : new ArrayList<>(GuildPermission.from(permissionsRaw.longValue()));
+        List<Permission> permissions = new ArrayList<>(Permission.from(JsonHelper.getInt(data, "permissions")));
 
         JsonArray featuresRaw = JsonHelper.getArray(data, "features");
         List<GuildFeature> features = new ArrayList<>();

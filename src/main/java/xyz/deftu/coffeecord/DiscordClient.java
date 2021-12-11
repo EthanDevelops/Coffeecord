@@ -131,9 +131,8 @@ public class DiscordClient {
         if (readyLock != null) {
             synchronized(readyLock) {
                 readyLock.notify();
+                readyLock = null;
             }
-
-            readyLock = null;
         }
     }
 
