@@ -158,7 +158,14 @@ public class EntityCreator {
 
         // TODO - Attachments
 
-        BaseChannel channel = channelId == -1 ? null : client.getRestRequester().request(new ChannelRequest(client, channelId));
+        BaseChannel channel = null;
+        if (channelId != -1) {
+            BaseChannel cached = channel = client.getDiscordCache().getChannel(channelId);
+            if (cached == null) {
+                BaseChannel fetched = channel = client.getRestRequester().request(new ChannelRequest(client, channelId));
+                client.getDiscordCache().addChannel(fetched.getId(), fetched);
+            }
+        }
 
         return new Message(client, tts, timestamp, pinned, id, embeds, editedTimestamp, content, messageReference, author, channel == null ? new LimitedChannel(client, channelId) : channel);
     }
@@ -263,7 +270,16 @@ public class EntityCreator {
 
     public GuildChannel createGuildChannel(JsonObject data, long id, ChannelType type) {
         Number guildIdRaw = JsonHelper.getNumber(data, "guild_id");
-        Guild guild = guildIdRaw == null ? null : client.getRestRequester().request(new GuildRequest(client, guildIdRaw.longValue()));
+        Guild guild = null;
+        if (guildIdRaw != null) {
+            long guildId = guildIdRaw.longValue();
+            Guild cached = guild = client.getDiscordCache().getGuild(guildId);
+            if (cached == null) {
+                Guild fetched = guild = client.getRestRequester().request(new GuildRequest(client, guildIdRaw.longValue()));
+                client.getDiscordCache().addGuild(fetched.getId(), fetched);
+            }
+        }
+
         return type == ChannelType.GUILD_TEXT ?
                 createGuildTextChannel(data, id, guild) :
                 (type == ChannelType.GUILD_CATEGORY ?
