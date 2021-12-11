@@ -1,4 +1,4 @@
-package xyz.deftu.coffeecord.entities;
+package xyz.deftu.coffeecord;
 
 import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;

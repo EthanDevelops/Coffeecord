@@ -3,7 +3,6 @@ package xyz.deftu.coffeecord;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.Logger;
-import xyz.deftu.coffeecord.entities.DiscordCache;
 import xyz.deftu.coffeecord.entities.EntityCreator;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.entities.user.SelfUser;

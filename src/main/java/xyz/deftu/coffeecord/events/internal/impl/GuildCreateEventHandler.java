@@ -18,17 +18,22 @@ public class GuildCreateEventHandler extends BaseEventHandler {
         Number idRaw = JsonHelper.getNumber(data, "id");
         if (idRaw != null) { /* Should be impossible... */
             Multithreading.runAsync(() -> {
+                long id = idRaw.longValue();
+                client.getDiscordCache().addGuild(id, data);
+
                 JsonArray channelsRaw = JsonHelper.getArray(data, "channels");
                 if (channelsRaw != null) {
                     for (JsonElement channelRaw : channelsRaw) {
                         JsonObject channel = channelRaw.getAsJsonObject();
                         if (channel.has("id")) {
+                            if (!channel.has("guild_id")) {
+                                channel.addProperty("guild_id", id);
+                            }
+
                             client.getDiscordCache().addChannel(JsonHelper.getNumber(channel, "id").longValue(), channel);
                         }
                     }
                 }
-
-                client.getDiscordCache().addGuild(idRaw.longValue(), data);
             });
         }
     }
