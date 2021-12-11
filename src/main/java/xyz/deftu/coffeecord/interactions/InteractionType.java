@@ -1,4 +1,4 @@
-package xyz.deftu.coffeecord.utils;
+package xyz.deftu.coffeecord.interactions;
 
 public enum InteractionType {
     PING(1),

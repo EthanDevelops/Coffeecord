@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.commands.ApplicationCommand;
 import xyz.deftu.coffeecord.commands.ApplicationCommandType;
+import xyz.deftu.coffeecord.commands.impl.slash.options.SlashCommandOption;
 import xyz.deftu.coffeecord.entities.guild.Guild;
 
 import java.util.ArrayList;
@@ -14,9 +15,13 @@ import java.util.regex.Pattern;
 
 public class SlashCommand extends ApplicationCommand {
 
-    public static final Pattern NAME_REGEX = Pattern.compile("^[\\w-]{1,32}$");
+    public static final Pattern NAME_REGEX = Pattern.compile("^[\\w-]{1,32}$", Pattern.UNICODE_CASE);
 
     private final List<SlashCommandOption> options = new ArrayList<>();
+
+    public SlashCommand(long id, long guildId, String name, String description, boolean defaultPermission) {
+        super(id, ApplicationCommandType.CHAT, guildId, name, description, defaultPermission);
+    }
 
     public SlashCommand(Guild guild, String name, String description, boolean defaultPermission) {
         super(-1, ApplicationCommandType.CHAT, guild == null ? -1 : guild.getId(), checkName(name), description, defaultPermission);
@@ -40,6 +45,14 @@ public class SlashCommand extends ApplicationCommand {
 
     public SlashCommand addOption(SlashCommandOption option) {
         options.add(option);
+        return this;
+    }
+
+    public SlashCommand addOptions(SlashCommandOption... options) {
+        for (SlashCommandOption option : options) {
+            addOption(option);
+        }
+
         return this;
     }
 

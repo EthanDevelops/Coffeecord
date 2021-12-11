@@ -1,10 +1,7 @@
 package xyz.deftu.coffeecord;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.Logger;
 import xyz.deftu.coffeecord.commands.DiscordCommandManager;
-import xyz.deftu.coffeecord.entities.EntityCreator;
 import xyz.deftu.coffeecord.entities.user.SelfUser;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
 import xyz.deftu.coffeecord.presence.Presence;
@@ -15,19 +12,12 @@ import xyz.deftu.coffeecord.socket.impl.DiscordIdentifyPacket;
 import xyz.deftu.eventbus.SimpleEventBus;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class DiscordClient {
 
     private static long id = 0;
 
     private final Logger logger = Coffeecord.createLogger();
-    private final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .serializeNulls()
-            .setLenient()
-            .create();
 
     private String token;
 
@@ -37,7 +27,7 @@ public class DiscordClient {
     private final DiscordSocket socket;
     private final SimpleEventBus eventBus = new SimpleEventBus();
     private final DiscordEventParser eventParser;
-    private final EntityCreator entityCreator;
+    private final ObjectCreator objectCreator;
     private final RestRequester restRequester;
     private final DiscordCommandManager globalCommandManager;
     private final Presence presence;
@@ -54,7 +44,7 @@ public class DiscordClient {
         discordCache = new DiscordCache(this);
         socket = new DiscordSocket(Coffeecord.GATEWAY_URL, this);
         eventParser = new DiscordEventParser(this);
-        entityCreator = new EntityCreator(this);
+        objectCreator = new ObjectCreator(this);
         restRequester = new RestRequester(this);
         globalCommandManager = new DiscordCommandManager(this);
         presence = new Presence(this);
@@ -119,10 +109,6 @@ public class DiscordClient {
         return this;
     }
 
-    public Gson getGson() {
-        return gson;
-    }
-
     public String getToken() {
         return token;
     }
@@ -152,8 +138,8 @@ public class DiscordClient {
         return eventParser;
     }
 
-    public EntityCreator getEntityCreator() {
-        return entityCreator;
+    public ObjectCreator getObjectCreator() {
+        return objectCreator;
     }
 
     public RestRequester getRestRequester() {

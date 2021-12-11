@@ -1,6 +1,5 @@
 package xyz.deftu.coffeecord.requests.types.commands;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.Headers;
 import okhttp3.Response;
@@ -26,7 +25,7 @@ public class CommandCreateRequest extends RestRequest<ApplicationCommand> {
 
     public ApplicationCommand handleSuccess(Response response, String message, ResponseBody body, String bodyStr) {
         if (JsonHelper.isValid(bodyStr) && JsonHelper.isObject(bodyStr)) {
-            return client.getEntityCreator().createApplicationCommand(JsonParser.parseString(bodyStr).getAsJsonObject());
+            return client.getObjectCreator().createApplicationCommand(JsonParser.parseString(bodyStr).getAsJsonObject());
         } else {
             return null;
         }

@@ -2,7 +2,6 @@ package xyz.deftu.coffeecord.requests.types;
 
 import com.google.gson.JsonParser;
 import okhttp3.Headers;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import xyz.deftu.coffeecord.DiscordClient;
@@ -26,7 +25,7 @@ public class ChannelRequest extends RestRequest<BaseChannel> {
 
     public BaseChannel handleSuccess(Response response, String message, ResponseBody body, String bodyStr) {
         if (bodyStr != null && JsonHelper.isObject(bodyStr)) {
-            return client.getEntityCreator().createChannel(JsonParser.parseString(bodyStr).getAsJsonObject());
+            return client.getObjectCreator().createChannel(JsonParser.parseString(bodyStr).getAsJsonObject());
         } else {
             return null;
         }

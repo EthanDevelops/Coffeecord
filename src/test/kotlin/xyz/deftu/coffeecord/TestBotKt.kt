@@ -1,6 +1,5 @@
 package xyz.deftu.coffeecord
 
-import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel
 import xyz.deftu.coffeecord.events.initialization.GuildReadyEvent
 import xyz.deftu.coffeecord.presence.Activity
 import xyz.deftu.coffeecord.presence.OnlineStatus

@@ -21,7 +21,7 @@ public class GuildCreateEventHandler extends BaseEventHandler {
         long id = JsonHelper.getLong(data, "id");
         if (id != -1) {
             Multithreading.runAsync(() -> {
-                Guild guild = client.getEntityCreator().createGuild(data);
+                Guild guild = client.getObjectCreator().createGuild(data);
                 client.getDiscordCache().addGuild(id, guild);
 
                 JsonArray channelsRaw = JsonHelper.getArray(data, "channels");
@@ -33,7 +33,7 @@ public class GuildCreateEventHandler extends BaseEventHandler {
                                 channelRaw.addProperty("guild_id", id);
                             }
 
-                            GuildChannel channel = (GuildChannel) client.getEntityCreator().createChannel(channelRaw);
+                            GuildChannel channel = (GuildChannel) client.getObjectCreator().createChannel(channelRaw);
 
                             client.getDiscordCache().addGuildChannel(id, channel);
                             client.getDiscordCache().addChannel(JsonHelper.getLong(channelRaw, "id"), channel);

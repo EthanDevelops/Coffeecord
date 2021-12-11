@@ -106,7 +106,7 @@ public class DiscordSocket extends WebSocketClient {
 
     public void send(DiscordPacket packet) {
         packet.onSend();
-        String content = client.getGson().toJson(packet.asJson());
+        String content = Coffeecord.GSON.toJson(packet.asJson());
         if (Coffeecord.isSocketDebug()) {
             logger.info("Sent packet: {}", content);
         }

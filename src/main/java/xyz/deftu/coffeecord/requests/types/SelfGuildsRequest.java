@@ -35,7 +35,7 @@ public class SelfGuildsRequest extends RestRequest<List<Guild>> {
             System.out.println("Guild array: " + array);
             for (JsonElement guild : array) {
                 if (guild.isJsonObject()) {
-                    value.add(client.getEntityCreator().createGuild(guild.getAsJsonObject()));
+                    value.add(client.getObjectCreator().createGuild(guild.getAsJsonObject()));
                 }
             }
 

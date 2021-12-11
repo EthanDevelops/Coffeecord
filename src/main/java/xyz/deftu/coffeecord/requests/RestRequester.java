@@ -39,11 +39,16 @@ public class RestRequester {
             Response response = httpClient.newCall(sent.build()).execute();
             int code = response.code();
             ResponseBody body = response.body();
-            if (code == 200) {
+            if (code >= 200 && code <= 300) {
                 value.complete(request.handleSuccess(response, response.message(), body, body == null ? null : body.string()));
             } else {
-                logger.error("A request failed with the code of {}.", code);
-                request.handleFailure(response, response.message(), body, body == null ? null : body.string());
+                try {
+                    String bodyStr = body == null ? null : body.string();
+                    logger.error("A request with type of \"{}\" failed with the code of {} and message of \"{}\".{}", request.getClass().getSimpleName(), code, response.message(), bodyStr == null ? "" : "\n" + bodyStr);
+                    request.handleFailure(response, response.message(), body, bodyStr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             return value.getNow(null);

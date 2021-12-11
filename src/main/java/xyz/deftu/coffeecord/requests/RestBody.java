@@ -6,6 +6,7 @@ import okhttp3.RequestBody;
 import okio.Buffer;
 import okio.BufferedSink;
 import org.jetbrains.annotations.NotNull;
+import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,7 @@ public class RestBody extends RequestBody {
     }
 
     public RestBody(DiscordClient client, JsonObject content) {
-        this(client.getGson().toJson(content));
+        this(Coffeecord.GSON.toJson(content));
     }
 
     public MediaType contentType() {

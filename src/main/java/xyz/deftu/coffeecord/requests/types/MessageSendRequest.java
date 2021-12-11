@@ -23,7 +23,7 @@ public class MessageSendRequest extends RestRequest<Message> {
 
     public Message handleSuccess(Response response, String message, ResponseBody body, String bodyStr) {
         if (bodyStr != null && JsonHelper.isObject(bodyStr)) {
-            return client.getEntityCreator().createMessage(JsonParser.parseString(bodyStr).getAsJsonObject());
+            return client.getObjectCreator().createMessage(JsonParser.parseString(bodyStr).getAsJsonObject());
         } else {
             return null;
         }

@@ -1,12 +1,15 @@
-package xyz.deftu.coffeecord.entities;
+package xyz.deftu.coffeecord;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import xyz.deftu.coffeecord.DiscordApplication;
-import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.commands.ApplicationCommand;
+import xyz.deftu.coffeecord.commands.ApplicationCommandType;
+import xyz.deftu.coffeecord.commands.impl.MessageCommand;
+import xyz.deftu.coffeecord.commands.impl.UserCommand;
+import xyz.deftu.coffeecord.commands.impl.slash.SlashCommand;
+import xyz.deftu.coffeecord.entities.Permission;
 import xyz.deftu.coffeecord.entities.channel.*;
 import xyz.deftu.coffeecord.entities.channel.direct.BasePrivateChannel;
 import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel;
@@ -22,6 +25,8 @@ import xyz.deftu.coffeecord.entities.message.embed.*;
 import xyz.deftu.coffeecord.entities.message.MessageReference;
 import xyz.deftu.coffeecord.entities.user.SelfUser;
 import xyz.deftu.coffeecord.entities.user.User;
+import xyz.deftu.coffeecord.interactions.Interaction;
+import xyz.deftu.coffeecord.interactions.InteractionType;
 import xyz.deftu.coffeecord.requests.types.ChannelRequest;
 import xyz.deftu.coffeecord.requests.types.GuildRequest;
 import xyz.deftu.coffeecord.utils.JsonHelper;
@@ -30,11 +35,11 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityCreator {
+public class ObjectCreator {
 
     private final DiscordClient client;
 
-    public EntityCreator(DiscordClient client) {
+    public ObjectCreator(DiscordClient client) {
         this.client = client;
     }
 
@@ -58,7 +63,78 @@ public class EntityCreator {
     }
 
     public ApplicationCommand createApplicationCommand(JsonObject data) {
-        return null;
+        ApplicationCommandType type = ApplicationCommandType.from(JsonHelper.getInt(data, "type"));
+        return type == ApplicationCommandType.CHAT ?
+                createSlashCommand(data) :
+                (type == ApplicationCommandType.USER ?
+                        createUserCommand(data) :
+                        (type == ApplicationCommandType.MESSAGE ?
+                                createMessageCommand(data) :
+                                null));
+    }
+
+    public SlashCommand createSlashCommand(JsonObject data) {
+        long id = JsonHelper.getLong(data, "id");
+        long guildId = JsonHelper.getLong(data, "guild_id");
+        String name = JsonHelper.getString(data, "name");
+        String description = JsonHelper.getString(data, "description");
+        boolean defaultPermission = JsonHelper.getBoolean(data, "default_permission");
+
+        return new SlashCommand(id, guildId, name, description, defaultPermission);
+    }
+
+    public UserCommand createUserCommand(JsonObject data) {
+        return null; // TODO
+    }
+
+    public MessageCommand createMessageCommand(JsonObject data) {
+        return null; // TODO
+    }
+
+    public Interaction createInteraction(JsonObject data) {
+        long id = JsonHelper.getLong(data, "id");
+
+        long applicationId = JsonHelper.getLong(data, "application_id");
+        DiscordApplication application = client.getApplication();
+
+        long version = JsonHelper.getLong(data, "version");
+        InteractionType type = InteractionType.from(JsonHelper.getInt(data, "type"));
+
+        long guildId = JsonHelper.getLong(data, "guild_id");
+        Guild guild = null;
+        if (guildId != -1) {
+            Guild cached = guild = client.getDiscordCache().getGuild(guildId);
+            if (cached == null) {
+                Guild fetched = guild = client.getRestRequester().request(new GuildRequest(client, guildId));
+                client.getDiscordCache().addGuild(fetched.getId(), fetched);
+            }
+        }
+
+        long channelId = JsonHelper.getLong(data, "channel_id");
+        BaseChannel channel = null;
+        if (channelId != -1) {
+            BaseChannel cached = channel = client.getDiscordCache().getChannel(channelId);
+            if (cached == null) {
+                BaseChannel fetched = channel = client.getRestRequester().request(new ChannelRequest(client, channelId));
+                client.getDiscordCache().addChannel(fetched.getId(), fetched);
+            }
+        }
+
+        JsonObject userRaw = JsonHelper.getObject(data, "user");
+        User user = null;
+        if (userRaw != null) {
+            user = createUser(userRaw);
+        }
+
+        String token = JsonHelper.getString(data, "token");
+
+        JsonObject messageRaw = JsonHelper.getObject(data, "message");
+        Message message = null;
+        if (messageRaw != null) {
+            message = createMessage(messageRaw);
+        }
+
+        return new Interaction(client, id, applicationId == application.getId() ? application : null, version, type, guild, channel, user, token, message);
     }
 
     public User createUser(JsonObject data) {

@@ -61,7 +61,7 @@ public class DiscordCache {
      * @param data The user data to be added.
      */
     public void addUser(long id, JsonObject data) {
-        addUser(id, client.getEntityCreator().createUser(data));
+        addUser(id, client.getObjectCreator().createUser(data));
     }
 
     /**
@@ -88,7 +88,7 @@ public class DiscordCache {
      * @param data The message data to be added.
      */
     public void addMessage(long id, JsonObject data) {
-        addMessage(id, client.getEntityCreator().createMessage(data));
+        addMessage(id, client.getObjectCreator().createMessage(data));
     }
 
     /**
@@ -115,7 +115,7 @@ public class DiscordCache {
      * @param data The guild data to be added.
      */
     public void addGuild(long id, JsonObject data) {
-        addGuild(id, client.getEntityCreator().createGuild(data));
+        addGuild(id, client.getObjectCreator().createGuild(data));
     }
 
     /**
@@ -142,7 +142,7 @@ public class DiscordCache {
      * @param data The channel data to be added.
      */
     public void addChannel(long id, JsonObject data) {
-        addChannel(id, client.getEntityCreator().createChannel(data));
+        addChannel(id, client.getObjectCreator().createChannel(data));
     }
 
     /**
@@ -170,7 +170,7 @@ public class DiscordCache {
      * @param data The guild channel data to be added.
      */
     public void addGuildChannel(long id, JsonObject data) {
-        addGuildChannel(id, (GuildChannel) client.getEntityCreator().createChannel(data));
+        addGuildChannel(id, (GuildChannel) client.getObjectCreator().createChannel(data));
     }
 
     /**

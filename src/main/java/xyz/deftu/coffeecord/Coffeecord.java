@@ -1,5 +1,7 @@
 package xyz.deftu.coffeecord;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +14,12 @@ public class Coffeecord {
     public static final String GATEWAY_URL = "wss://gateway.discord.gg/?v=9&encoding=json";
     public static final String API_URL = "https://discord.com/api/v9";
     public static final String CDN_URL = "https://cdn.discordapp.com/";
+
+    public static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .setLenient()
+            .create();
 
     private static final Pattern BOOLEAN_PATTERN = Pattern.compile("true|false", Pattern.CASE_INSENSITIVE);
 

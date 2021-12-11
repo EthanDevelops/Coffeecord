@@ -1,10 +1,14 @@
 package xyz.deftu.coffeecord.events.internal.impl;
 
 import com.google.gson.JsonObject;
+import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.commands.ApplicationCommandType;
+import xyz.deftu.coffeecord.commands.impl.slash.SlashCommand;
+import xyz.deftu.coffeecord.events.interactions.SlashCommandEvent;
 import xyz.deftu.coffeecord.events.internal.BaseEventHandler;
-import xyz.deftu.coffeecord.utils.InteractionType;
+import xyz.deftu.coffeecord.interactions.Interaction;
+import xyz.deftu.coffeecord.interactions.InteractionType;
 import xyz.deftu.coffeecord.utils.JsonHelper;
 
 public class InteractionCreateHandler extends BaseEventHandler {
@@ -30,6 +34,8 @@ public class InteractionCreateHandler extends BaseEventHandler {
 
     private void handleApplicationCommand(JsonObject data) {
         JsonObject internalData = JsonHelper.getObject(data, "data");
+        Coffeecord.createLogger().warn("Application cmd: {}", Coffeecord.GSON.toJson(data));
+        Coffeecord.createLogger().warn("Application cmd int: {}", Coffeecord.GSON.toJson(internalData));
         if (internalData != null) {
             Number typeRaw = JsonHelper.getNumber(internalData, "type");
             if (typeRaw != null) {
@@ -50,7 +56,9 @@ public class InteractionCreateHandler extends BaseEventHandler {
     }
 
     private void handleChatCommand(JsonObject data) {
-
+        SlashCommand command = client.getObjectCreator().createSlashCommand(data);
+        Interaction interaction = client.getObjectCreator().createInteraction(data);
+        client.getEventBus().post(new SlashCommandEvent(client, interaction, command));
     }
 
     private void handleUserCommand(JsonObject data) {

@@ -12,7 +12,7 @@ public class MessageCreateEventHandler extends BaseEventHandler {
     }
 
     public void handle(JsonObject data) {
-        client.getEventBus().post(new MessageReceivedEvent(client, client.getEntityCreator().createMessage(data)));
+        client.getEventBus().post(new MessageReceivedEvent(client, client.getObjectCreator().createMessage(data)));
     }
 
 }

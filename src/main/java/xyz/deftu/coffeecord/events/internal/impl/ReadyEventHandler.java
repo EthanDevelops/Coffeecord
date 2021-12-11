@@ -1,7 +1,6 @@
 package xyz.deftu.coffeecord.events.internal.impl;
 
 import com.google.gson.JsonObject;
-import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.events.internal.BaseEventHandler;
 import xyz.deftu.coffeecord.utils.JsonHelper;
@@ -22,12 +21,12 @@ public class ReadyEventHandler extends BaseEventHandler {
 
         JsonObject userRaw = JsonHelper.getObject(data, "user");
         if (userRaw != null) { /* Shouldn't happen... */
-            client.setSelfUser(client.getEntityCreator().createSelfUser(userRaw));
+            client.setSelfUser(client.getObjectCreator().createSelfUser(userRaw));
         }
 
         JsonObject applicationRaw = JsonHelper.getObject(data, "application");
         if (applicationRaw != null) { /* Shouldn't happen... */
-            client.setApplication(client.getEntityCreator().createDiscordApplication(applicationRaw));
+            client.setApplication(client.getObjectCreator().createDiscordApplication(applicationRaw));
         }
 
         client.invalidateLock();

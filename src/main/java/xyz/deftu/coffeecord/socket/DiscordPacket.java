@@ -3,6 +3,7 @@ package xyz.deftu.coffeecord.socket;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
+import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
 
 public abstract class DiscordPacket {
@@ -30,7 +31,7 @@ public abstract class DiscordPacket {
     }
 
     public <T> void addData(String key, T value) {
-        data.add(key, client.getGson().toJsonTree(value));
+        data.add(key, Coffeecord.GSON.toJsonTree(value));
     }
 
     public Object getDataOverride() {
@@ -58,7 +59,7 @@ public abstract class DiscordPacket {
                 value.add("d", data);
             }
         } else {
-            value.add("d", dataOverride == null ? JsonNull.INSTANCE : client.getGson().toJsonTree(dataOverride));
+            value.add("d", dataOverride == null ? JsonNull.INSTANCE : Coffeecord.GSON.toJsonTree(dataOverride));
         }
 
         return value;

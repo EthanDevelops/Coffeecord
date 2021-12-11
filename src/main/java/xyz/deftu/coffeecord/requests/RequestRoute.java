@@ -49,6 +49,10 @@ public class RequestRoute {
         public static final RequestRoute MODIFY_SELF = new RequestRoute(PATCH, "users/@me");
     }
 
+    public static class Interaction {
+        public static final RequestRoute CREATE_RESPONSE = new RequestRoute(POST, "interactions/{}/{}/callback");
+    }
+
     public static class Command {
         public static final RequestRoute CREATE_COMMAND = new RequestRoute(POST, "applications/{}/commands");
     }
