@@ -1,5 +1,6 @@
 package xyz.deftu.coffeecord
 
+import xyz.deftu.coffeecord.commands.impl.slash.SlashCommand
 import xyz.deftu.coffeecord.entities.channel.GuildChannel
 import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel
 import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel
@@ -23,15 +24,10 @@ class TestBotKt {
 
     fun start() {
         client.login()
-    }
-
-    @SubscribeEvent
-    private fun onMessageReceived(event: MessageReceivedEvent) {
-        if (!event.message.author.isBot) {
-            event.reply(message {
-                content = "Hello!"
-            })
-        }
+        client.globalCommandManager.create(slashCommand {
+            name = "test"
+            description = "Simple test command for Coffeecord."
+        })
     }
 
 }

@@ -3,8 +3,8 @@ package xyz.deftu.coffeecord;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.Logger;
+import xyz.deftu.coffeecord.commands.DiscordCommandManager;
 import xyz.deftu.coffeecord.entities.EntityCreator;
-import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.entities.user.SelfUser;
 import xyz.deftu.coffeecord.events.internal.DiscordEventParser;
 import xyz.deftu.coffeecord.presence.Presence;
@@ -15,8 +15,10 @@ import xyz.deftu.coffeecord.socket.impl.DiscordIdentifyPacket;
 import xyz.deftu.eventbus.SimpleEventBus;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class DiscordClient implements ISnowflake {
+public class DiscordClient {
 
     private static long id = 0;
 
@@ -29,13 +31,17 @@ public class DiscordClient implements ISnowflake {
 
     private String token;
 
+    private Object readyLock = new Object();
+
     private final DiscordCache discordCache;
     private final DiscordSocket socket;
     private final SimpleEventBus eventBus = new SimpleEventBus();
     private final DiscordEventParser eventParser;
     private final EntityCreator entityCreator;
     private final RestRequester restRequester;
+    private final DiscordCommandManager globalCommandManager;
     private final Presence presence;
+    private DiscordApplication application;
     private SelfUser selfUser;
 
     private UUID sessionId;
@@ -50,6 +56,7 @@ public class DiscordClient implements ISnowflake {
         eventParser = new DiscordEventParser(this);
         entityCreator = new EntityCreator(this);
         restRequester = new RestRequester(this);
+        globalCommandManager = new DiscordCommandManager(this);
         presence = new Presence(this);
 
         id++;
@@ -65,6 +72,14 @@ public class DiscordClient implements ISnowflake {
         if (connected) {
             socket.send(new DiscordIdentifyPacket(this, token));
             eventParser.initialize();
+
+            synchronized(readyLock) {
+                try {
+                    readyLock.wait();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
             logger.error("DiscordClient with the ID of " + id + " failed to connect to the Discord gateway.");
         }
@@ -112,8 +127,14 @@ public class DiscordClient implements ISnowflake {
         return token;
     }
 
-    public long getId() {
-        return id;
+    public void invalidateLock() {
+        if (readyLock != null) {
+            synchronized(readyLock) {
+                readyLock.notify();
+            }
+
+            readyLock = null;
+        }
     }
 
     public DiscordCache getDiscordCache() {
@@ -140,8 +161,20 @@ public class DiscordClient implements ISnowflake {
         return restRequester;
     }
 
+    public DiscordCommandManager getGlobalCommandManager() {
+        return globalCommandManager;
+    }
+
     public Presence getPresence() {
         return presence;
+    }
+
+    public DiscordApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(DiscordApplication application) {
+        this.application = application;
     }
 
     public SelfUser getSelfUser() {

@@ -37,9 +37,13 @@ public class RestRequester {
             }
 
             Response response = httpClient.newCall(sent.build()).execute();
-            if (response.code() == 200) {
-                ResponseBody body = response.body();
+            int code = response.code();
+            ResponseBody body = response.body();
+            if (code == 200) {
                 value.complete(request.handleSuccess(response, response.message(), body, body == null ? null : body.string()));
+            } else {
+                logger.error("A request failed with the code of {}.", code);
+                request.handleFailure(response, response.message(), body, body == null ? null : body.string());
             }
 
             return value.getNow(null);

@@ -25,6 +25,8 @@ public abstract class RestRequest<T> {
     }
 
     public abstract T handleSuccess(Response response, String message, ResponseBody body, String bodyStr);
+    public void handleFailure(Response response, String message, ResponseBody body, String bodyStr) {
+    }
 
     public DiscordClient getClient() {
         return client;

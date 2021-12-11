@@ -48,4 +48,8 @@ public class RequestRoute {
         public static final RequestRoute GET_SELF_GUILDS = new RequestRoute(GET, "users/@me/guilds");
         public static final RequestRoute MODIFY_SELF = new RequestRoute(PATCH, "users/@me");
     }
+
+    public static class Command {
+        public static final RequestRoute CREATE_COMMAND = new RequestRoute(POST, "applications/{}/commands");
+    }
 }

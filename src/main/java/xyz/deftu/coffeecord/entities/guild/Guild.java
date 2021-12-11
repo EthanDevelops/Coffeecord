@@ -1,6 +1,7 @@
 package xyz.deftu.coffeecord.entities.guild;
 
 import xyz.deftu.coffeecord.DiscordClient;
+import xyz.deftu.coffeecord.commands.DiscordCommandManager;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.requests.types.GuildRegionRequest;
 import xyz.deftu.coffeecord.utils.ImageFormat;
@@ -13,6 +14,7 @@ public class Guild implements ISnowflake {
 
     private final DiscordClient client;
     private final long id;
+    private final DiscordCommandManager commandManager;
 
     private final String name;
     private final String icon;
@@ -23,6 +25,8 @@ public class Guild implements ISnowflake {
     public Guild(DiscordClient client, long id, String name, String icon, boolean owner, List<GuildPermission> permissions, List<GuildFeature> features) {
         this.client = client;
         this.id = id;
+        this.commandManager = new DiscordCommandManager(client, this);
+
         this.name = name;
         this.icon = icon;
         this.owner = owner;
@@ -38,7 +42,9 @@ public class Guild implements ISnowflake {
         return id;
     }
 
-    /* TODO - Slash commands. */
+    public DiscordCommandManager getCommandManager() {
+        return commandManager;
+    }
 
     public List<Region> retrieveRegions(boolean deprecated) {
         return client.getRestRequester().request(new GuildRegionRequest(client, this, deprecated));

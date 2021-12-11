@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
+import xyz.deftu.coffeecord.entities.guild.Guild;
+import xyz.deftu.coffeecord.events.GuildReadyEvent;
 import xyz.deftu.coffeecord.events.internal.BaseEventHandler;
 import xyz.deftu.coffeecord.utils.JsonHelper;
 import xyz.deftu.deftils.Multithreading;
@@ -19,7 +21,8 @@ public class GuildCreateEventHandler extends BaseEventHandler {
         if (idRaw != null) { /* Should be impossible... */
             Multithreading.runAsync(() -> {
                 long id = idRaw.longValue();
-                client.getDiscordCache().addGuild(id, data);
+                Guild guild = client.getEntityCreator().createGuild(data);
+                client.getDiscordCache().addGuild(id, guild);
 
                 JsonArray channelsRaw = JsonHelper.getArray(data, "channels");
                 if (channelsRaw != null) {
@@ -34,6 +37,8 @@ public class GuildCreateEventHandler extends BaseEventHandler {
                         }
                     }
                 }
+
+                client.getEventBus().post(new GuildReadyEvent(client, guild));
             });
         }
     }

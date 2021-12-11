@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.events.internal.impl.GuildCreateEventHandler;
+import xyz.deftu.coffeecord.events.internal.impl.InteractionCreateHandler;
 import xyz.deftu.coffeecord.events.internal.impl.MessageCreateEventHandler;
 import xyz.deftu.coffeecord.events.internal.impl.ReadyEventHandler;
 
@@ -23,6 +24,7 @@ public class DiscordEventParser {
 
     public void initialize() {
         addHandler("READY", new ReadyEventHandler(client));
+        addHandler("INTERACTION_CREATE", new InteractionCreateHandler(client));
         addHandler("MESSAGE_CREATE", new MessageCreateEventHandler(client));
         addHandler("GUILD_CREATE", new GuildCreateEventHandler(client));
     }

@@ -2,11 +2,20 @@ package xyz.deftu.coffeecord.utils;
 
 import com.google.gson.*;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class JsonHelper {
 
+    private static final Map<String, JsonElement> jsonCache = new ConcurrentHashMap<>();
+
     public static boolean isValid(String input) {
+        if (jsonCache.containsKey(input)) {
+            return true;
+        }
+
         try {
-            JsonParser.parseString(input);
+            jsonCache.put(input, JsonParser.parseString(input));
             return true;
         } catch (Exception e) {
             return false;
@@ -14,11 +23,21 @@ public class JsonHelper {
     }
 
     public static boolean isObject(String input) {
-        return isValid(input) && JsonParser.parseString(input).isJsonObject();
+        JsonElement cached = jsonCache.get(input);
+        if (cached != null) {
+            return cached.isJsonObject();
+        } else {
+            return isValid(input) && isObject(input);
+        }
     }
 
     public static boolean isArray(String input) {
-        return isValid(input) && JsonParser.parseString(input).isJsonArray();
+        JsonElement cached = jsonCache.get(input);
+        if (cached != null) {
+            return cached.isJsonArray();
+        } else {
+            return isValid(input) && isArray(input);
+        }
     }
 
     public static JsonElement getElement(JsonObject object, String key) {

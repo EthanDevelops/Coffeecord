@@ -4,7 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import xyz.deftu.coffeecord.DiscordApplication;
 import xyz.deftu.coffeecord.DiscordClient;
+import xyz.deftu.coffeecord.commands.ApplicationCommand;
 import xyz.deftu.coffeecord.entities.channel.*;
 import xyz.deftu.coffeecord.entities.channel.direct.BasePrivateChannel;
 import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel;
@@ -48,6 +50,17 @@ public class EntityCreator {
         int flags = flagsRaw == null ? -1 : flagsRaw.intValue();
 
         return new SelfUser(client, id, username, discriminator, avatar, banner, flags);
+    }
+
+    public DiscordApplication createDiscordApplication(JsonObject data) {
+        Number idRaw = JsonHelper.getNumber(data, "id");
+        long id = idRaw == null ? -1 : idRaw.longValue();
+
+        return new DiscordApplication(id);
+    }
+
+    public ApplicationCommand createApplicationCommand(JsonObject data) {
+        return null;
     }
 
     public User createUser(JsonObject data) {
