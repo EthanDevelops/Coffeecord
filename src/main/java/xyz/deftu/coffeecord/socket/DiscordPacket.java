@@ -58,7 +58,7 @@ public abstract class DiscordPacket {
                 value.add("d", data);
             }
         } else {
-            value.add("d", dataOverride == null ? JsonNull.INSTANCE : client.getGson().toJsonTree(dataOverride.toString()));
+            value.add("d", dataOverride == null ? JsonNull.INSTANCE : client.getGson().toJsonTree(dataOverride));
         }
 
         return value;

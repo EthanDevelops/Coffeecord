@@ -30,6 +30,7 @@ public class DiscordIdentifyPacket extends DiscordPacket {
         }
 
         addData("intents", client.getIntents());
+        addData("presence", client.getPresence().asJson());
     }
 
 }

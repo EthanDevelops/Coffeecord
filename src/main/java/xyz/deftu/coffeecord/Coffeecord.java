@@ -9,6 +9,7 @@ public class Coffeecord {
 
     public static final String NAME = "Coffeecord";
 
+    public static final String GATEWAY_URL = "wss://gateway.discord.gg/?v=9&encoding=json";
     public static final String API_URL = "https://discord.com/api/v9";
     public static final String CDN_URL = "https://cdn.discordapp.com/";
 
@@ -38,6 +39,10 @@ public class Coffeecord {
     }
 
     /* Logging. */
+
+    public static Logger createLogger() {
+        return LogManager.getLogger("Coffeecord");
+    }
 
     public static Logger createLogger(String input) {
         return LogManager.getLogger("Coffeecord (" + input + ")");

@@ -3,14 +3,10 @@ package xyz.deftu.coffeecord.events.internal.impl;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import xyz.deftu.coffeecord.Coffeecord;
 import xyz.deftu.coffeecord.DiscordClient;
-import xyz.deftu.coffeecord.entities.channel.BaseChannel;
 import xyz.deftu.coffeecord.events.internal.BaseEventHandler;
 import xyz.deftu.coffeecord.utils.JsonHelper;
-
-import java.util.ArrayList;
-import java.util.List;
+import xyz.deftu.deftils.Multithreading;
 
 public class GuildCreateEventHandler extends BaseEventHandler {
 
@@ -21,23 +17,19 @@ public class GuildCreateEventHandler extends BaseEventHandler {
     public void handle(JsonObject data) {
         Number idRaw = JsonHelper.getNumber(data, "id");
         if (idRaw != null) { /* Should be impossible... */
-            JsonArray channelsRaw = JsonHelper.getArray(data, "channels");
-            if (channelsRaw != null) {
-                List<BaseChannel> channels = new ArrayList<>();
-                for (JsonElement channelRaw : channelsRaw) {
-                    if (channelRaw.isJsonObject()) {
-                        channels.add(client.getEntityCreator().createChannel(channelRaw.getAsJsonObject()));
+            Multithreading.runAsync(() -> {
+                JsonArray channelsRaw = JsonHelper.getArray(data, "channels");
+                if (channelsRaw != null) {
+                    for (JsonElement channelRaw : channelsRaw) {
+                        JsonObject channel = channelRaw.getAsJsonObject();
+                        if (channel.has("id")) {
+                            client.getDiscordCache().addChannel(JsonHelper.getNumber(channel, "id").longValue(), channel);
+                        }
                     }
                 }
 
-                for (BaseChannel channel : channels) {
-                    if (channel != null) {
-                        client.getEntityCache().channelCache.put(channel.getId(), channel);
-                    }
-                }
-            }
-
-            client.getEntityCache().guildCache.put(idRaw.longValue(), client.getEntityCreator().createGuild(data));
+                client.getDiscordCache().addGuild(idRaw.longValue(), data);
+            });
         }
     }
 

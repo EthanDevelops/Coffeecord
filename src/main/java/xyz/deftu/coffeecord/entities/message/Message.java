@@ -6,6 +6,7 @@ import xyz.deftu.coffeecord.DiscordClient;
 import xyz.deftu.coffeecord.entities.JsonSerializable;
 import xyz.deftu.coffeecord.entities.ISnowflake;
 import xyz.deftu.coffeecord.entities.channel.BaseChannel;
+import xyz.deftu.coffeecord.entities.channel.GuildChannel;
 import xyz.deftu.coffeecord.entities.message.embed.MessageEmbed;
 import xyz.deftu.coffeecord.entities.user.User;
 import xyz.deftu.coffeecord.requests.types.MessageSendRequest;
@@ -104,7 +105,8 @@ public class Message implements ISnowflake, JsonSerializable<JsonObject> {
     }
 
     public Message reply(Message message) {
-        message = message.withReference(new MessageReference(getId(), channel.getId()));
+        long guildId = channel instanceof GuildChannel ? ((GuildChannel) channel).getGuild().getId() : -1;
+        message = message.withReference(new MessageReference(getId(), channel.getId(), guildId));
         DiscordClient client = getClient();
         return client.getRestRequester().request(new MessageSendRequest(
                 client,

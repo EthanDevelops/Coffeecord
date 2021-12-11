@@ -30,8 +30,8 @@ public class DiscordSocket extends WebSocketClient {
 
     private final Map<DiscordPacketCode, Class<? extends DiscordPacket>> packetRegistry = new HashMap<>();
 
-    public DiscordSocket(URI serverUri, DiscordClient client) {
-        super(serverUri);
+    public DiscordSocket(String uri, DiscordClient client) {
+        super(URI.create(uri));
         this.client = client;
 
         initialize();

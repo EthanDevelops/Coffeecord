@@ -38,7 +38,7 @@ public class Guild implements ISnowflake {
         return id;
     }
 
-    /* Slash commands. */
+    /* TODO - Slash commands. */
 
     public List<Region> retrieveRegions(boolean deprecated) {
         return client.getRestRequester().request(new GuildRegionRequest(client, this, deprecated));

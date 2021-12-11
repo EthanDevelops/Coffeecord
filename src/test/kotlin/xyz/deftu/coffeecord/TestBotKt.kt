@@ -4,6 +4,8 @@ import xyz.deftu.coffeecord.entities.channel.GuildChannel
 import xyz.deftu.coffeecord.entities.channel.direct.PrivateChannel
 import xyz.deftu.coffeecord.entities.channel.guild.GuildTextChannel
 import xyz.deftu.coffeecord.events.MessageReceivedEvent
+import xyz.deftu.coffeecord.presence.Activity
+import xyz.deftu.coffeecord.presence.OnlineStatus
 import xyz.deftu.coffeecord.socket.GatewayIntent
 import xyz.deftu.eventbus.SubscribeEvent
 
@@ -13,6 +15,8 @@ class TestBotKt {
         discord {
             token = System.getProperty("coffeecord.test.token") /* Set the bot token in JVM arguments. */
             intents = listOf(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES)
+            onlineStatus = OnlineStatus.DO_NOT_DISTURB
+            activities = arrayOf(Activity.playing("with Deftu's mind."))
             eventListeners = arrayOf(this@TestBotKt)
         }
     }
@@ -24,29 +28,9 @@ class TestBotKt {
     @SubscribeEvent
     private fun onMessageReceived(event: MessageReceivedEvent) {
         if (!event.message.author.isBot) {
-            val cont = event.message.content
-            if (cont.startsWith("!")) {
-                val command = cont.substring(1).lowercase()
-                when (command) {
-                    "test" -> {
-                        var new = ""
-                        for (entry in event.client.entityCache.channelCache) {
-                            val channel = entry.value as GuildChannel
-                            new += channel.name + " | " + channel::class.java.name + "\n"
-                        }
-
-                        event.reply(message {
-                            content = new
-                        })
-                    }
-
-                    else -> {
-                        event.reply(message {
-                            content = "Invalid command."
-                        })
-                    }
-                }
-            }
+            event.reply(message {
+                content = "Hello!"
+            })
         }
     }
 
