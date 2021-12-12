@@ -1,2 +1,0 @@
-- [Entities](entities/entities.md)
-- [Slash Commands](commands/slash_commands.md)
