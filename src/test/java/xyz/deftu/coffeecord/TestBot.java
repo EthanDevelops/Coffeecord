@@ -5,8 +5,12 @@ import xyz.deftu.coffeecord.commands.impl.slash.options.SlashCommandOption;
 import xyz.deftu.coffeecord.entities.message.MessageBuilder;
 import xyz.deftu.coffeecord.events.interactions.SlashCommandEvent;
 import xyz.deftu.coffeecord.events.messages.MessageReceivedEvent;
+import xyz.deftu.coffeecord.interactions.InteractionDeferred;
 import xyz.deftu.coffeecord.socket.GatewayIntent;
+import xyz.deftu.deftils.Multithreading;
 import xyz.deftu.eventbus.SubscribeEvent;
+
+import java.util.concurrent.TimeUnit;
 
 public class TestBot {
 
@@ -38,9 +42,17 @@ public class TestBot {
 
     @SubscribeEvent
     private void onSlashCommand(SlashCommandEvent event) {
-        event.reply(new MessageBuilder()
-                .setContent("Hello, World!")
-                .build());
+        InteractionDeferred deferred = event.defer();
+        Multithreading.schedule(() -> {
+            deferred.edit(new MessageBuilder()
+                    .setContent("This message was deferred.")
+                    .build());
+            Multithreading.schedule(() -> {
+                deferred.edit(new MessageBuilder()
+                        .setContent("Deferred twice!")
+                        .build());
+            }, 5, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
     }
 
     public static void main(String[] args) {

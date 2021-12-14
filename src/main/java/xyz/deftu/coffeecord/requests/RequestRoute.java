@@ -53,6 +53,11 @@ public class RequestRoute {
         public static final RequestRoute CREATE_RESPONSE = new RequestRoute(POST, "interactions/{}/{}/callback");
     }
 
+    public static class Webhook {
+        public static final RequestRoute EDIT_ORIGINAL = new RequestRoute(PATCH, "/webhooks/{}/{}/messages/@original");
+        public static final RequestRoute EDIT_MESSAGE = new RequestRoute(PATCH, "/webhooks/{}/{}/messages/{}");
+    }
+
     public static class Command {
         public static final RequestRoute CREATE_COMMAND = new RequestRoute(POST, "applications/{}/commands");
     }

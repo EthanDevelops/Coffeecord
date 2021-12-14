@@ -7,7 +7,6 @@ import xyz.deftu.coffeecord.entities.channel.BaseChannel;
 import xyz.deftu.coffeecord.entities.guild.Guild;
 import xyz.deftu.coffeecord.entities.message.Message;
 import xyz.deftu.coffeecord.entities.user.User;
-import xyz.deftu.coffeecord.requests.types.interactions.InteractionRespondRequest;
 
 public class Interaction implements ISnowflake {
 
